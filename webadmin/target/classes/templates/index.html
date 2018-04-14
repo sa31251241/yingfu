@@ -1,0 +1,58 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="base/common_head :: common_head">
+</head>
+<div th:include="base/common_js :: common_js"></div>
+<body>
+<div class="layui-layout layui-layout-admin kit-layout-admin">
+    <div th:include="base/top :: top">
+    </div>
+
+    <div class="layui-side layui-bg-black kit-side">
+        <div class="layui-side-scroll">
+            <div class="kit-side-fold"><i class="fa fa-navicon" aria-hidden="true"></i></div>
+            <ul class="layui-nav layui-nav-tree" lay-filter="kitNavbar" kit-navbar>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>库存管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-url="product/productSkuList.html" data-icon="&#xe658" data-title="商品管理" kit-target data-id='1'><i class="layui-icon">&#xe658;</i><span>商品管理</span></a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="layui-body" id="container">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">主体内容加载中,请稍等...</div>
+    </div>
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+    </div>
+</div>
+<script type="text/javascript">
+</script>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    var message;
+    layui.config({
+        base: '/build/js/'
+    }).use(['app', 'message'], function() {
+        var app = layui.app,
+            $ = layui.jquery,
+            layer = layui.layer;
+        //将message设置为全局以便子页面调用
+        message = layui.message;
+        //主入口
+        app.set({
+            type: 'iframe'
+        }).init();
+    });
+    layui.use(['element', 'layer'], function(){
+        var element = layui.element;
+        var $ = layui.jquery, layer = layui.layer;
+        var laydate = layui.laydate;
+        layerTips = parent.layer === undefined ? layui.layer : parent.layer //获取父窗口的layer对象
+    });
+</script>
+</body>
+
+</html>

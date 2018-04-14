@@ -1,0 +1,42 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="base/common_head :: common_head">
+</head>
+<div style="margin: 15px;">
+    <form class="layui-form layui-form-pane">
+        <input type="hidden" name="id" value="${channel.id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">渠道名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="channelName" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">负责人</label>
+            <div class="layui-input-block">
+                <input type="text" name="linkman" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">负责人电话</label>
+            <div class="layui-input-block">
+                <input type="tel" name="linkMobile" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">结算方式</label>
+            <div class="layui-input-block">
+                <select name="settlementId"  lay-filter="settlementId" lay-verify="required">
+                    <option value="">请选择结算方式</option>
+                </select>
+            </div>
+        </div>
+        <input type="hidden"  name="settlementName" id="settlementName">
+        <button lay-filter="update" lay-submit style="display: none;"></button>
+    </form>
+</div>
+<script>
+    layui.use([ 'form'], function() {
+        /*var form = layui.form;*/
+    });
+
+</script>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="component-base" />
+        <module name="component-mybatis" />
+        <module name="component-redis" />
+        <module name="component-web" />
+        <module name="webadmin" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="1.8">
+      <module name="component-base" target="1.8" />
+      <module name="component-mybatis" target="1.8" />
+      <module name="component-redis" target="1.8" />
+      <module name="component-web" target="1.8" />
+      <module name="webadmin" target="1.8" />
+      <module name="yingfu" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
