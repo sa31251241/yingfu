@@ -14,6 +14,4 @@ import java.util.List;
  */
 public interface IBaseMapper<T> extends Mapper<T>, MySqlMapper<T> {
 
-    @Select("select * from abc where id=#{id}")
-    List<T> listAll(String id);
 }

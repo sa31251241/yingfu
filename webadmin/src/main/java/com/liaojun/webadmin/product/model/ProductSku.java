@@ -2,12 +2,20 @@ package com.liaojun.webadmin.product.model;
 
 import com.liaojun.component.base.db.model.BaseModel;
 
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * 商品sku
  * @Author: yangzi
  * @Date: 2018/4/13 10:09y
  */
-public class ProductSku extends BaseModel{
+@Table(name = "t_product_sku")
+public class ProductSku{
+
+    @Id
+    private  String id;
+
     private String pdCode;
 
     private String skuCode;
@@ -27,9 +35,25 @@ public class ProductSku extends BaseModel{
     /**
      * 保质期天数
      */
-    private String shelfLife;
+    private Integer shelfLife;
 
     private String remark;
+
+    private String createUser;
+
+    private String createTime;
+
+    private String updateUser;
+
+    private String updateTime;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getPdCode() {
         return pdCode;
@@ -95,11 +119,11 @@ public class ProductSku extends BaseModel{
         this.vendorName = vendorName;
     }
 
-    public String getShelfLife() {
+    public Integer getShelfLife() {
         return shelfLife;
     }
 
-    public void setShelfLife(String shelfLife) {
+    public void setShelfLife(Integer shelfLife) {
         this.shelfLife = shelfLife;
     }
 
@@ -109,5 +133,37 @@ public class ProductSku extends BaseModel{
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 }

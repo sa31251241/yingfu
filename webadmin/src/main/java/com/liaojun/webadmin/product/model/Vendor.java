@@ -1,13 +1,18 @@
 package com.liaojun.webadmin.product.model;
 
-import com.liaojun.component.base.db.model.BaseModel;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * 供应商
  * @Author: yangzi
  * @Date: 2018/4/13 11:50
  */
-public class Vendor extends BaseModel{
+@Table(name = "t_vendor")
+public class Vendor{
+
+    @Id
+    private String id;
 
     private String name;
 
@@ -24,6 +29,22 @@ public class Vendor extends BaseModel{
     private String fax;
 
     private String remark;
+
+    private String createUser;
+
+    private String createTime;
+
+    private String updateUser;
+
+    private String updateTime;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -87,5 +108,37 @@ public class Vendor extends BaseModel{
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 }

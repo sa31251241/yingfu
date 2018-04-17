@@ -6,6 +6,7 @@ import com.liaojun.component.base.db.model.PageRequest;
 import com.liaojun.component.base.db.model.PageResult;
 import com.liaojun.component.base.db.model.SortRequest;
 import com.liaojun.component.base.util.BeanUtil;
+import com.liaojun.component.base.util.IdGenerateUtil;
 import com.liaojun.component.base.util.StringUtil;
 import com.liaojun.component.mybatis.constant.ComponentMyBatisConstant;
 import com.liaojun.component.mybatis.service.BaseService;
@@ -37,6 +38,7 @@ public abstract class BaseServiceImpl<T> implements BaseService<T>{
 
     @Override
     public void save(T t) {
+        setBaseProperties(t);
         baseMapper.insert(t);
     }
 
@@ -140,6 +142,7 @@ public abstract class BaseServiceImpl<T> implements BaseService<T>{
         return baseMapper.selectByExample(condition);
     }
 
+
     @Override
     public List<T> getList(Map<String, Object> paramMap, SortRequest sortRequest) {
         Condition condition = CriteriaUtil.combineParam(paramMap,getEntityClass());
@@ -148,8 +151,22 @@ public abstract class BaseServiceImpl<T> implements BaseService<T>{
     }
 
     @Override
+    public List<T> getList(Map<String, Object> paramMap, PageRequest pageRequest,SortRequest sortRequest) {
+        Condition condition = CriteriaUtil.combineParam(paramMap,getEntityClass());
+        setSort(condition,sortRequest);
+        PageHelper.startPage(pageRequest.getPage(), pageRequest.getLimit());
+        return baseMapper.selectByExample(condition);
+    }
+
+
+    @Override
     public int getSize(Map<String, Object> paramMap) {
         return baseMapper.selectCountByExample(CriteriaUtil.combineParam(paramMap,getEntityClass()));
+    }
+
+    @Override
+    public PageResult getPageResult(PageRequest pageRequest) {
+        return new PageResult(pageRequest,getSize(null),getPageList(null,pageRequest,null));
     }
 
     @Override
@@ -164,8 +181,7 @@ public abstract class BaseServiceImpl<T> implements BaseService<T>{
 
     @Override
     public List<T> getPageList(Map<String, Object> paramMap, PageRequest pageRequest, SortRequest sortRequest) {
-        PageHelper.startPage(pageRequest.getPageIndex(), pageRequest.getPageSize(),false);
-        return getList(paramMap,sortRequest);
+        return getList(paramMap,pageRequest,sortRequest);
     }
 
     @Override
@@ -183,6 +199,16 @@ public abstract class BaseServiceImpl<T> implements BaseService<T>{
     @Override
     public void delete(Map<String, Object> paramMap) {
         baseMapper.deleteByExample(CriteriaUtil.combineParam(paramMap,getEntityClass()));
+    }
+
+    private void setBaseProperties(T t){
+        try {
+            BeanUtil.setProperty(t, ComponentMyBatisConstant.DB_KEY.ID.getValue(), IdGenerateUtil.getInstance().nextId().toString());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     private T returnOne(List<T> list){

@@ -9,11 +9,10 @@ import org.springframework.context.annotation.ComponentScan;
 /**
  * @author Administrator
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages={"com.liaojun.*"})
 public class WebAppApplication {
 
     public static void main(String[] args) {
-
         SpringApplication.run(WebAppApplication.class, args);
     }
     /*@Override

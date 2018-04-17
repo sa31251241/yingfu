@@ -1,0 +1,63 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="base/common_head :: common_head">
+</head>
+<div style="margin: 15px;">
+    <form class="layui-form layui-form-pane">
+        <input type="hidden" name="id" value="" th:value="${vendor?.id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">供应商名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" th:value="${vendor?.name}" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="address" th:value="${vendor?.address}" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">联系人</label>
+            <div class="layui-input-block">
+                <input type="tel" name="contact" th:value="${vendor?.contact}" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">联系人手机</label>
+            <div class="layui-input-block">
+                <input type="tel" name="contactMobile" th:value="${vendor?.contactMobile}" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">固定电话</label>
+            <div class="layui-input-block">
+                <input type="tel" name="telphone" th:value="${vendor?.telphone}" placeholder="请输入"  autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-block">
+                <input type="tel" name="email" th:value="${vendor?.email}" placeholder="请输入"   autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">传真</label>
+            <div class="layui-input-block">
+                <input type="tel" name="fax" th:value="${vendor?.fax}"  placeholder="请输入"  autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block" >
+                <textarea name="remark" th:text="${vendor?.remark}" placeholder="请输入内容" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <button lay-filter="update" lay-submit style="display: none;"></button>
+    </form>
+</div>
+<script>
+    layui.use([ 'form'], function() {
+        /*var form = layui.form;*/
+    });
+
+</script>

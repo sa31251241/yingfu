@@ -5,27 +5,27 @@ package com.liaojun.component.base.db.model;
  */
 public class PageRequest {
 
-    private Integer pageIndex;
-    private Integer pageSize;
+    private Integer page;
+    private Integer limit;
 
-    public PageRequest(Integer pageIndex,Integer pageSize){
-        setPageIndex(pageIndex);
-        setPageSize(pageSize);
+    public PageRequest(Integer page,Integer limit){
+        setPage(page);
+        setLimit(limit);
     }
 
-    public Integer getPageIndex() {
-        return pageIndex;
+    public Integer getPage() {
+        return page;
     }
 
-    public void setPageIndex(Integer pageIndex) {
-        this.pageIndex = pageIndex;
+    public void setPage(Integer page) {
+        this.page = page;
     }
 
-    public Integer getPageSize() {
-        return pageSize;
+    public Integer getLimit() {
+        return limit;
     }
 
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 }

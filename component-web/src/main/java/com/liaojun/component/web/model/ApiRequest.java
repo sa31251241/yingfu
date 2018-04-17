@@ -1,6 +1,7 @@
 package com.liaojun.component.web.model;
 
 import com.alibaba.fastjson.JSONObject;
+import com.liaojun.component.base.util.MapBuilder;
 import com.liaojun.component.base.util.StringUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -32,6 +33,22 @@ public class ApiRequest {
 
     public Map<String, Object> getParams() {
         return params;
+    }
+
+    public Map<String,Object> getNoEmptyParams(){
+        return removeEmpty(params);
+    }
+
+    private Map<String,Object> removeEmpty(Map<String, Object> params) {
+        Map<String,Object> result = new HashMap<>();
+        if(params != null){
+            for (Map.Entry<String, Object> stringObjectEntry : params.entrySet()) {
+                if(!StringUtil.isEmpty(stringObjectEntry.getValue())){
+                    result.put(stringObjectEntry.getKey(),stringObjectEntry.getValue());
+                }
+            }
+        }
+        return result;
     }
 
     public void putParam(String key,Object value) {

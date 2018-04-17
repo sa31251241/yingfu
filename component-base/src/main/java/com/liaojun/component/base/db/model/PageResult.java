@@ -14,8 +14,8 @@ public class PageResult {
     private List records;
 
     public PageResult(PageRequest pageRequest,Integer recordCount,List records){
-        setPageIndex(pageRequest.getPageIndex());
-        setPageSize(pageRequest.getPageSize());
+        setPageIndex(pageRequest.getPage());
+        setPageSize(pageRequest.getLimit());
         setRecordCount(recordCount);
         setRecords(records);
         calculatePageCount();

@@ -50,9 +50,13 @@ public interface BaseService<T>{
 
     public List<T> getList(String key, Object value, SortRequest sortRequest);
 
+    public List<T> getList(Map<String, Object> paramMap, PageRequest pageRequest,SortRequest sortRequest);
+
     public List<T> getList(Map<String, Object> paramMap, SortRequest sortRequest);
 
     public int getSize(Map<String, Object> paramMap);
+
+    public PageResult getPageResult(PageRequest pageRequest);
 
     public PageResult getPageResult(Map<String, Object> paramMap, PageRequest pageRequest);
 

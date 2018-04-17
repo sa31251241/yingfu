@@ -1,11 +1,16 @@
 package com.liaojun.webadmin.product.model;
 
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * 商品sku库存配置
  * @Author: yangzi
  * @Date: 2018/4/13 10:59
  */
+@Table(name = "t_product_sku_config")
 public class ProductSkuConfig {
+    @Id
     private String id;
 
     private String productSkuId;

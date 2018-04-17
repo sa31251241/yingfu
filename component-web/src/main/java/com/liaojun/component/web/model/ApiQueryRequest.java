@@ -9,16 +9,16 @@ import com.liaojun.component.base.util.StringUtil;
  */
 public class ApiQueryRequest extends ApiRequest {
 
-    private Integer pageIndex;
-    private Integer pageSize;
+    private Integer page;
+    private Integer limit;
     private String sortKey;
     private String sortDirection;
 
     public PageRequest getPageRequest(){
-        if(this.pageIndex == null || this.pageSize == null){
+        if(this.page == null || this.limit == null){
             return null;
         }
-        return new PageRequest(this.pageIndex,this.pageSize);
+        return new PageRequest(this.page,this.limit);
     }
 
     public SortRequest getSortRequest(){
@@ -28,20 +28,20 @@ public class ApiQueryRequest extends ApiRequest {
         return new SortRequest(this.sortKey,this.sortDirection);
     }
 
-    public Integer getPageIndex() {
-        return pageIndex;
+    public Integer getPage() {
+        return page;
     }
 
-    public void setPageIndex(Integer pageIndex) {
-        this.pageIndex = pageIndex;
+    public void setPage(Integer page) {
+        this.page = page;
     }
 
-    public Integer getPageSize() {
-        return pageSize;
+    public Integer getLimit() {
+        return limit;
     }
 
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 
     public String getSortKey() {
