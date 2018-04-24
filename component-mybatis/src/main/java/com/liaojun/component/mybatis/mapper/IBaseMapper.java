@@ -1,5 +1,7 @@
 package com.liaojun.component.mybatis.mapper;
 
+import com.liaojun.component.base.db.model.PageRequest;
+import com.liaojun.component.base.db.model.SortRequest;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import tk.mybatis.mapper.common.Mapper;
@@ -14,4 +16,7 @@ import java.util.List;
  */
 public interface IBaseMapper<T> extends Mapper<T>, MySqlMapper<T> {
 
+    List<T> findList(T t, PageRequest pageRequest, SortRequest sortRequest);
+
+    Integer findListCount(T t);
 }

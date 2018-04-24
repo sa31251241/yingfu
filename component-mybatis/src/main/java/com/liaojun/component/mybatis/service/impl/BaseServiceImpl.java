@@ -2,10 +2,12 @@ package com.liaojun.component.mybatis.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.liaojun.component.base.constant.ComponentBaseConstant;
+import com.liaojun.component.base.db.model.BaseModel;
 import com.liaojun.component.base.db.model.PageRequest;
 import com.liaojun.component.base.db.model.PageResult;
 import com.liaojun.component.base.db.model.SortRequest;
 import com.liaojun.component.base.util.BeanUtil;
+import com.liaojun.component.base.util.DateUtil;
 import com.liaojun.component.base.util.IdGenerateUtil;
 import com.liaojun.component.base.util.StringUtil;
 import com.liaojun.component.mybatis.constant.ComponentMyBatisConstant;
@@ -17,6 +19,7 @@ import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +59,8 @@ public abstract class BaseServiceImpl<T> implements BaseService<T>{
     public T get(String key, Object value) {
         PageHelper.startPage(1,1);
         Condition condition = getCondition();
-        List<T> ts = baseMapper.selectByExample(condition.createCriteria().andEqualTo(key, value));
+        condition.createCriteria().andEqualTo(key, value);
+        List<T> ts = baseMapper.selectByExample(condition);
         return returnOne(ts);
     }
 
@@ -101,6 +105,7 @@ public abstract class BaseServiceImpl<T> implements BaseService<T>{
 
     @Override
     public void update(T t) {
+        updateBaseProperties(t);
         baseMapper.updateByPrimaryKeySelective(t);
     }
 
@@ -201,13 +206,85 @@ public abstract class BaseServiceImpl<T> implements BaseService<T>{
         baseMapper.deleteByExample(CriteriaUtil.combineParam(paramMap,getEntityClass()));
     }
 
+    @Override
+    public T getBean(Map<String,Object> params) {
+        T obj = null;
+        try {
+            obj = (T) getEntityClass().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+            obj = null;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            obj = null;
+        }
+        if(obj == null){
+            return null;
+        }
+        try {
+            BeanUtil.populate(obj, params);
+            return obj;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public PageResult findList(T t, PageRequest pageRequest, SortRequest sortRequest) {
+        if(pageRequest!=null){
+            pageRequest.setPage((pageRequest.getPage()-1)*pageRequest.getLimit());
+        }
+        List<T> invInList = baseMapper.findList(t, pageRequest, sortRequest);
+        return new PageResult(pageRequest,baseMapper.findListCount(t),getBeanMapList(invInList));
+    }
+
+    @Override
+    public Map<String, Object> getBeanMap(T t) {
+        return BeanUtil.getBeanMap(t);
+    }
+
+    @Override
+    public List<Map<String, Object>> getBeanMapList(List<T> list) {
+        List<Map<String,Object>> resultList = new ArrayList<Map<String, Object>>();
+        for(T t : list) {
+            resultList.add(this.getBeanMap(t));
+        }
+        return resultList;
+    }
+
+
     private void setBaseProperties(T t){
         try {
-            BeanUtil.setProperty(t, ComponentMyBatisConstant.DB_KEY.ID.getValue(), IdGenerateUtil.getInstance().nextId().toString());
+            if(StringUtil.isEmpty(BeanUtil.getProperty(t, ComponentMyBatisConstant.DB_KEY.ID.getValue()))){
+                BeanUtil.setProperty(t, ComponentMyBatisConstant.DB_KEY.ID.getValue(), IdGenerateUtil.getInstance().nextId().toString());
+            }
+            if(t instanceof BaseModel){
+                BeanUtil.setProperty(t, ComponentMyBatisConstant.BASE_MODEL_ATTR.CREATE_TIME.getValue(), DateUtil.newDateTimeString());
+                BeanUtil.setProperty(t, ComponentMyBatisConstant.BASE_MODEL_ATTR.UPDATE_TIME.getValue(), DateUtil.newDateTimeString());
+            }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateBaseProperties(T t){
+        if(t instanceof BaseModel){
+            try {
+                BeanUtil.setProperty(t, ComponentMyBatisConstant.BASE_MODEL_ATTR.UPDATE_TIME.getValue(), DateUtil.newDateTimeString());
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

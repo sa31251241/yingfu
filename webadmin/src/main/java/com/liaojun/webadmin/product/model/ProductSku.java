@@ -4,19 +4,18 @@ import com.liaojun.component.base.db.model.BaseModel;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
- * 商品sku
+ * 物品sku
  * @Author: yangzi
  * @Date: 2018/4/13 10:09y
  */
 @Table(name = "t_product_sku")
-public class ProductSku{
+public class ProductSku extends BaseModel{
 
     @Id
     private  String id;
-
-    private String pdCode;
 
     private String skuCode;
 
@@ -24,12 +23,16 @@ public class ProductSku{
 
     private String typeId;
 
+    @Transient
     private String typeName;
 
-    private String band;
+    private String brand;
+
+    private String model;
 
     private String vendorId;
 
+    @Transient
     private String vendorName;
 
     /**
@@ -39,13 +42,6 @@ public class ProductSku{
 
     private String remark;
 
-    private String createUser;
-
-    private String createTime;
-
-    private String updateUser;
-
-    private String updateTime;
 
     public String getId() {
         return id;
@@ -53,14 +49,6 @@ public class ProductSku{
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getPdCode() {
-        return pdCode;
-    }
-
-    public void setPdCode(String pdCode) {
-        this.pdCode = pdCode;
     }
 
     public String getSkuCode() {
@@ -95,12 +83,20 @@ public class ProductSku{
         this.typeName = typeName;
     }
 
-    public String getBand() {
-        return band;
+    public String getBrand() {
+        return brand;
     }
 
-    public void setBand(String band) {
-        this.band = band;
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public String getVendorId() {
@@ -135,35 +131,4 @@ public class ProductSku{
         this.remark = remark;
     }
 
-    public String getCreateUser() {
-        return createUser;
-    }
-
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getUpdateUser() {
-        return updateUser;
-    }
-
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
-    }
-
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
-    }
 }

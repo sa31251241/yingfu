@@ -2,6 +2,7 @@ package com.liaojun.webadmin.system.model;
 
 import com.liaojun.component.base.db.model.BaseModel;
 
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.List;
@@ -12,6 +13,9 @@ import java.util.List;
  */
 @Table(name = "t_role")
 public class Role extends BaseModel {
+
+    @Id
+    private String id;
 
     private String name;
 
@@ -25,6 +29,14 @@ public class Role extends BaseModel {
 
     @Transient
     private List<Permission> permissions;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

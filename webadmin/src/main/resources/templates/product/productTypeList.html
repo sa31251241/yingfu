@@ -1,0 +1,178 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="base/common_head :: common_head">
+</head>
+<body>
+<div th:include="base/common_js :: common_js"></div>
+<script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<div class="layui-row">
+    <div class="layui-col-xs3">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>分类树</legend>
+        </fieldset>
+        <div style="display: inline-block; width: 200px; overflow: auto;">
+            <ul id="productTypeTree"></ul>
+        </div>
+    </div>
+    <div class="layui-col-xs9">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>分类列表</legend>
+            <div class="layui-row">
+                <div class="layui-col-md8">
+                    <div class="grid-demo grid-demo-bg1">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">分类名称</label>
+                                <div class="layui-input-inline">
+                                    <input type="tel" name="name" id="productTypeName" lay-verify="required" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <button id="btnSearch" class="layui-btn layui-btn-normal">搜索</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-btn-group" style="float:right">
+                        <button class="layui-btn" id="add">增加</button>
+                    </div>
+                </div>
+            </div>
+            <table class="layui-table" id="LAY_table_productType"  lay-filter="productType">
+            </table>
+        </fieldset>
+    </div>
+</div>
+
+<script type="text/html" id="handlebar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    var tableArray = [
+        { title: '序号', type:"numbers"}
+        ,{field:'name', title: '分类名称'}
+        ,{field:'pname', title: '父分类'}
+        ,{field:'createTime', title: '创建时间'}
+        ,{field:'remark', title: '备注'}
+        ,{toolbar: '#handlebar', title: '操作'}
+    ]
+    productTypeTree = {}
+    baseConfig.ajax.post({
+        url:"/product/productType/tree",
+        async: false,
+        data:{},
+        success:function(data){
+            productTypeTree = data;
+        }
+    })
+    baseConfig.layui.init({
+        use:['element', 'layer','tree', 'form', 'laydate','table'],
+        useTable:{
+            toolName:"productType",
+            onTool:function (obj) {
+                var data = obj.data;
+                if (obj.event === 'del') {
+                    layer.confirm('删除分类将连同子分类一同删除，确认删除'+ data.name +'分类吗？', function(index){
+                        layer.close(index);
+                        baseConfig.ajax.post({
+                            url:"/product/productType/delete",
+                            data:{
+                                id:data.id
+                            },
+                            success:function(data){
+                                if(data.success){
+                                    layerTips.msg(data.message);
+                                    location.reload(); //刷新
+                                }else{
+                                    layerTips.msg(data.message);
+                                }
+                            }
+                        })
+                    });
+                } else if (obj.event === 'edit') {
+                    update_productType("edit",data.id)
+                }
+            }
+        },
+        tableRender:{
+            elem: 'LAY_table_productType'
+            ,url: '/product/productType/list'
+            ,cols: [tableArray]
+            ,id: 'productTypeReload'
+        },
+        tree:{
+            treeData:productTypeTree,
+            clickFunction:function(item){
+            }
+        }
+    })
+
+    function reaload_table() {
+        baseConfig.layui.reloadTable({
+            renderId:'productTypeReload',
+            params:{
+                "name":$("#productTypeName").val(),
+            }
+        })
+    }
+
+    $("#btnSearch").click(function () {
+        reaload_table();
+    });
+
+    var addBoxIndex = -1;
+    $('#add').on('click', function() {
+        update_productType("add")
+    })
+    function update_productType(type,id){
+        if(addBoxIndex !== -1)
+            return;
+        //本表单通过ajax加载 --以模板的形式，当然你也可以直接写在页面上读取
+        url = baseUrl+'/product/productType/detail.html';
+        if("edit"==type){
+            url=url+"?id="+id
+            title = "编辑分类"
+        }else{
+            title = "新增分类"
+        }
+        $.get(url, null, function(form) {
+            addBoxIndex = layer.open({
+                type: 1,
+                title: title,
+                content: form,
+                btn: ['保存', '取消'],
+                shade:[0.8, '#393D49'],
+                offset: 'auto',
+                area: ['800px', '600px'],
+                maxmin: true,
+                yes: baseConfig.layui.openyes,
+                full: function(elem) {
+                    baseConfig.ajaxFull(elem)
+                },
+                success: baseConfig.layui.opensuccess({
+                    submitId:"update",
+                    onSubmit:function(data) {
+                        baseConfig.ajax.post({
+                            url:'/product/productType/update',
+                            data:data.field,
+                            success:function(data){
+                                if(data.success){
+                                    layerTips.msg(data.message);
+                                    layui.layer.closeAll('page');
+                                    reaload_table(); //刷新
+                                }else{
+                                    layerTips.msg(data.message);
+                                }
+                            }
+                        })
+                    }
+                }),
+                end: function() {
+                    addBoxIndex = -1;
+                }
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

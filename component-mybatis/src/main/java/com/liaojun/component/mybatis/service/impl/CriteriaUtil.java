@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class CriteriaUtil {
 
-    enum DB_OPERATOR_MATCHES {
+    public enum DB_OPERATOR_MATCHES {
         OR_SEPARATOR("||"),
         OR("__or"),
         IN("__in"),

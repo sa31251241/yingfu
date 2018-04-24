@@ -1,5 +1,7 @@
 package com.liaojun.webadmin.product.model;
 
+import com.liaojun.component.base.db.model.BaseModel;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -9,7 +11,7 @@ import javax.persistence.Table;
  * @Date: 2018/4/13 11:50
  */
 @Table(name = "t_vendor")
-public class Vendor{
+public class Vendor extends BaseModel{
 
     @Id
     private String id;
@@ -29,14 +31,6 @@ public class Vendor{
     private String fax;
 
     private String remark;
-
-    private String createUser;
-
-    private String createTime;
-
-    private String updateUser;
-
-    private String updateTime;
 
     public String getId() {
         return id;
@@ -110,35 +104,4 @@ public class Vendor{
         this.remark = remark;
     }
 
-    public String getCreateUser() {
-        return createUser;
-    }
-
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getUpdateUser() {
-        return updateUser;
-    }
-
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
-    }
-
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
-    }
 }

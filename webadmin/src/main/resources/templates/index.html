@@ -2,6 +2,7 @@
 <head th:include="base/common_head :: common_head">
 </head>
 <div th:include="base/common_js :: common_js"></div>
+<script th:src="@{/layui/layui.js}" charset="utf-8"></script>
 <body>
 <div class="layui-layout layui-layout-admin kit-layout-admin">
     <div th:include="base/top :: top">
@@ -14,8 +15,12 @@
                 <li class="layui-nav-item">
                     <a class="" href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>库存管理</span></a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="product/productSkuList.html" data-icon="&#xe658" data-title="商品管理" kit-target data-id='1'><i class="layui-icon">&#xe658;</i><span>商品管理</span></a></dd>
-                        <dd><a href="javascript:;" data-url="product/vendorList.html" data-icon="&#xe658" data-title="供应商管理" kit-target data-id='2'><i class="layui-icon">&#xe658;</i><span>供应商管理</span></a></dd>
+                        <dd><a href="javascript:;" data-url="product/productType/list.html" data-icon="&#xe658" data-title="物品分类管理" kit-target data-id='1'><i class="layui-icon">&#xe658;</i><span>物品分类管理</span></a></dd>
+                        <dd><a href="javascript:;" data-url="product/productSku/list.html" data-icon="&#xe658" data-title="物品管理" kit-target data-id='2'><i class="layui-icon">&#xe658;</i><span>物品管理</span></a></dd>
+                        <dd><a href="javascript:;" data-url="product/vendor/list.html" data-icon="&#xe658" data-title="供应商管理" kit-target data-id='3'><i class="layui-icon">&#xe658;</i><span>供应商管理</span></a></dd>
+                        <dd><a href="javascript:;" data-url="stock/invIn/list.html" data-icon="&#xe658" data-title="入库单" kit-target data-id='4'><i class="layui-icon">&#xe658;</i><span>入库单</span></a></dd>
+                        <dd><a href="javascript:;" data-url="stock/invOut/list.html" data-icon="&#xe658" data-title="出库单" kit-target data-id='5'><i class="layui-icon">&#xe658;</i><span>出库单</span></a></dd>
+                        <dd><a href="javascript:;" data-url="product/vendor/list.html" data-icon="&#xe658" data-title="供应商管理" kit-target data-id='6'><i class="layui-icon">&#xe658;</i><span>供应商管理</span></a></dd>
                     </dl>
                 </li>
             </ul>

@@ -90,7 +90,7 @@ public class ApiRequest {
 
     public <T> T populate(T obj) {
         try {
-            BeanUtils.populate(obj,getParams());
+            BeanUtils.populate(obj,getNoEmptyParams());
             return obj;
         } catch (Exception e) {
             logger.error(ExceptionUtils.getStackTrace(e));
