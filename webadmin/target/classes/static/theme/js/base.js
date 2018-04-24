@@ -42,10 +42,16 @@ function isEmptyString(obj) {
 baseConfig = {
     ajax: {
         post:function(configure){
+            if(isEmptyObj(configure.async)){
+                async = true;
+            }else{
+                async = configure.async
+            }
             $.ajax({
                 url: baseUrl+configure.url,
                 type: 'post',
                 contentType:"application/json",
+                async: async,
                 data:JSON.stringify({
                     params:configure.data
                 }),
@@ -90,26 +96,42 @@ baseConfig = {
                         var table = layui.table;
                         var form = layui.form;
                         layerTips = parent.layer === undefined ? layui.layer : parent.layer //获取父窗口的layer对象
-                        if(!isEmptyObj(configure.useTable)){
+                        if (!isEmptyObj(configure.useTable)) {
                             layui.use('table', function () {
                                 var table = layui.table;
                                 //监听工具条
-                                table.on('tool('+configure.useTable.toolName+')', function (obj) {
+                                table.on('tool(' + configure.useTable.toolName + ')', function (obj) {
                                     configure.useTable.onTool(obj)
                                 })
                             })
                         }
-                        if(!isEmptyObj(configure.tableRender)){
+                        if (!isEmptyObj(configure.tableRender)) {
                             table.render({
-                                elem: '#'+configure.tableRender.elem
-                                ,url: baseUrl+configure.tableRender.url
-                                ,cols: configure.tableRender.cols
-                                ,id:  configure.tableRender.id
-                                ,page: true
-                                ,height: 'full-200'
-                                ,cellMinWidth: 80
-                                ,limit:10
+                                elem: '#' + configure.tableRender.elem
+                                , url: baseUrl + configure.tableRender.url
+                                , cols: configure.tableRender.cols
+                                , id: configure.tableRender.id
+                                , page: true
+                                , height: 'full-200'
+                                , cellMinWidth: 80
+                                , limit: 10
                             });
+                        }
+                        if (!isEmptyObj(configure.tree)){
+                            if (!isEmptyObj(configure.tree.treeData)) {
+                                layui.tree({
+                                    elem: '#productTypeTree' //指定元素
+                                    , target: '_blank' //是否新选项卡打开（比如节点返回href才有效）
+                                    , click: function (item) { //点击节点回调
+                                        if (!isEmptyObj(configure.tree.clickFunction)) {
+                                            configure.tree.clickFunction(item)
+                                        }
+                                    }
+                                    , nodes: [ //节点
+                                        configure.tree.treeData
+                                    ]
+                                });
+                            }
                         }
                     })
                 }

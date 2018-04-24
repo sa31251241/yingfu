@@ -5,19 +5,10 @@ package com.liaojun.component.base.db.model;
  */
 public class BaseModel {
 
-    protected String id;
     protected String createUser;
     protected String createTime;
     protected String updateUser;
     protected String updateTime;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getCreateUser() {
         return createUser;

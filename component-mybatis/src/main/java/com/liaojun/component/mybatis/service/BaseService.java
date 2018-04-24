@@ -13,61 +13,68 @@ import java.util.Map;
  */
 public interface BaseService<T>{
 
-    public static enum DB_KEY {
+    static enum DB_KEY {
         ID("id");
         private String value;
         DB_KEY(String value){this.value = value;}
-        public String getValue(){return this.value;}
+        String getValue(){return this.value;}
     }
 
-    public void save(T t);
+    void save(T t);
 
-    public void insertAll(List<T> objs);
+    void insertAll(List<T> objs);
 
-    public T get(String id);
+    T get(String id);
 
-    public T get(String key, Object value);
+    T get(String key, Object value);
 
-    public T get(Map<String, Object> paramMap);
+    T get(Map<String, Object> paramMap);
 
-    public boolean exist(String key, Object value);
+    boolean exist(String key, Object value);
 
-    public boolean existExceptId(String id, String key, Object value);
+    boolean existExceptId(String id, String key, Object value);
 
-    public T get(String key, Object value, SortRequest sortRequest);
+    T get(String key, Object value, SortRequest sortRequest);
 
-    public T get(Map<String, Object> paramMap, SortRequest sortRequest);
+    T get(Map<String, Object> paramMap, SortRequest sortRequest);
 
-    public void update(T t);
+    void update(T t);
 
-    public void update(String id, String key, Object value);
+    void update(String id, String key, Object value);
 
-    public List<T> getList();
+    List<T> getList();
 
-    public List<T> getList(String key, Object value);
+    List<T> getList(String key, Object value);
 
-    public List<T> getList(Map<String, Object> paramMap);
+    List<T> getList(Map<String, Object> paramMap);
 
-    public List<T> getList(String key, Object value, SortRequest sortRequest);
+    List<T> getList(String key, Object value, SortRequest sortRequest);
 
-    public List<T> getList(Map<String, Object> paramMap, PageRequest pageRequest,SortRequest sortRequest);
+    List<T> getList(Map<String, Object> paramMap, PageRequest pageRequest,SortRequest sortRequest);
 
-    public List<T> getList(Map<String, Object> paramMap, SortRequest sortRequest);
+    List<T> getList(Map<String, Object> paramMap, SortRequest sortRequest);
 
-    public int getSize(Map<String, Object> paramMap);
+    int getSize(Map<String, Object> paramMap);
 
-    public PageResult getPageResult(PageRequest pageRequest);
+    PageResult getPageResult(PageRequest pageRequest);
 
-    public PageResult getPageResult(Map<String, Object> paramMap, PageRequest pageRequest);
+    PageResult getPageResult(Map<String, Object> paramMap, PageRequest pageRequest);
 
-    public PageResult getPageResult(Map<String, Object> paramMap, PageRequest pageRequest, SortRequest sortRequest);
+    PageResult getPageResult(Map<String, Object> paramMap, PageRequest pageRequest, SortRequest sortRequest);
 
-    public List<T> getPageList(Map<String, Object> paramMap, PageRequest pageRequest, SortRequest sortRequest);
+    List<T> getPageList(Map<String, Object> paramMap, PageRequest pageRequest, SortRequest sortRequest);
 
-    public void delete(String id);
+    void delete(String id);
 
-    public void delete(String key, Object value);
+    void delete(String key, Object value);
 
-    public void delete(Map<String, Object> paramMap);
+    void delete(Map<String, Object> paramMap);
 
+    T getBean(Map<String,Object> params);
+
+    PageResult findList(T t, PageRequest pageRequest, SortRequest sortRequest);
+
+    Map<String, Object> getBeanMap(T t);
+
+    List<Map<String, Object>> getBeanMapList(List<T> list);
 }

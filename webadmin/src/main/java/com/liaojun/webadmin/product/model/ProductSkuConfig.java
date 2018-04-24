@@ -1,10 +1,16 @@
 package com.liaojun.webadmin.product.model;
 
+import com.liaojun.component.base.util.BeanUtil;
+import org.apache.shiro.crypto.hash.Hash;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 商品sku库存配置
+ * 物品sku库存配置
  * @Author: yangzi
  * @Date: 2018/4/13 10:59
  */
@@ -60,4 +66,5 @@ public class ProductSkuConfig {
     public void setExpireWarning(Integer expireWarning) {
         this.expireWarning = expireWarning;
     }
+
 }

@@ -3,170 +3,193 @@
 </head>
 <body>
 <div th:include="base/common_js :: common_js"></div>
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-    <legend>物品管理</legend>
-</fieldset>
+<script th:src="@{/layui/layui.js}" charset="utf-8"></script>
 <div class="layui-row">
-    <div class="layui-col-md8">
-        <div class="grid-demo grid-demo-bg1">
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">商品名称</label>
-                    <div class="layui-input-inline">
-                        <input type="tel" name="phone" lay-verify="required|phone" autocomplete="off" class="layui-input">
+    <div class="layui-col-xs3">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>物品分类</legend>
+        </fieldset>
+        <div style="display: inline-block; width: 200px; overflow: auto;">
+            <input type="hidden" id="typeId">
+            <ul id="productTypeTree"></ul>
+        </div>
+    </div>
+    <div class="layui-col-xs9">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>物品管理</legend>
+            <div class="layui-row">
+                <div class="layui-col-md8">
+                    <div class="grid-demo grid-demo-bg1">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">物品名称/编码</label>
+                                <div class="layui-input-inline">
+                                    <input type="tel" name="keyword" id="keyword"  autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <button id="btnSearch" class="layui-btn layui-btn-normal">搜索</button>
+                        </div>
                     </div>
                 </div>
-                <button class="layui-btn layui-btn-normal">搜索</button>
+                <div class="layui-col-md3">
+                    <div class="layui-btn-group" style="float:right">
+                        <button class="layui-btn" id="add">增加</button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="layui-col-md3">
-        <div class="layui-btn-group" style="float:right">
-            <button class="layui-btn" id="add">增加</button>
-            <button class="layui-btn ">删除</button>
-        </div>
+            <table class="layui-table" id="LAY_table_productSku"  lay-filter="productSku">
+            </table>
+        </fieldset>
     </div>
 </div>
-<table class="layui-table" id="LAY_table_productSku" lay-data="{height: 'full-40', cellMinWidth: 80, page:true, id:'id'}" lay-filter="productSku">
-</table>
+
 <script type="text/html" id="handlebar">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script>
-    layui.use(['element', 'layer', 'form', 'laydate','table'], function() {
-        var element = layui.element;
-        var $ = layui.jquery, layer = layui.layer;
-        var laydate = layui.laydate;
-        var table = layui.table;
-        var form = layui.form;
-        layerTips = parent.layer === undefined ? layui.layer : parent.layer, //获取父窗口的layer对象
-        layui.use('table', function () {
-            var table = layui.table;
-            //监听工具条
-            table.on('tool(productSku)', function (obj) {
+    var tableArray = [
+        { title: '序号', type:"numbers"}
+        ,{field:'skuCode', title: '编码'}
+        ,{field:'name', title: '名称'}
+        ,{field:'typeName', title: '类别'}
+        ,{field:'brand', title: '品牌'}
+        ,{field:'model', title: '规格型号'}
+        ,{field:'vendorName', title: '供应商'}
+        ,{field:'shelfLife', title: '保质期天数'}
+        ,{field:'remark', title: '备注'}
+        ,{toolbar: '#handlebar', title: '操作',width:120}
+    ]
+
+    productTypeTree = {}
+    baseConfig.ajax.post({
+        url:"/product/productType/tree",
+        async: false,
+        data:{},
+        success:function(data){
+            productTypeTree = data;
+        }
+    })
+    baseConfig.layui.init({
+        use:['element', 'layer','tree', 'form', 'laydate','table'],
+        useTable:{
+            toolName:"productSku",
+            onTool:function (obj) {
                 var data = obj.data;
-                if (obj.event === 'detail') {
-                    layer.msg('ID：' + data.id + ' 的查看操作');
-                } else if (obj.event === 'del') {
-                    layer.confirm('确认删除'+ data.channelName +'渠道吗？', function(index){
+                if (obj.event === 'del') {
+                    layer.confirm('确认删除'+ data.name +'物品吗？', function(index){
                         layer.close(index);
-                        $.ajax({
-                            url: '${ctx}/channel/channel/channelDelete.do',
-                            type: 'post',
-                            data:{"id":data.id},
-                            dataType: 'json',
+                        baseConfig.ajax.post({
+                            url:"/product/productSku/delete",
+                            data:{
+                                id:data.id
+                            },
                             success:function(data){
                                 if(data.success){
-                                    layer.msg(data.msg);
-                                    reload_table();
+                                    layerTips.msg(data.message);
+                                    reload_table(); //刷新
                                 }else{
-                                    layer.msg(data.msg);
+                                    layerTips.msg(data.message);
                                 }
                             }
-                        });
-                    });;
+                        })
+                    });
                 } else if (obj.event === 'edit') {
-                    update_channel("edit",data.id)
+                    update_productSku("edit",data.id)
                 }
-            });
-        });
-
-        $("#searchBtn").click(function () {
-            reload_table()
-        })
-        var array = [
-            {checkbox: true, fixed: true}
-            ,{ title: '序号', type:"numbers"}
-            ,{field:'channelName', title: '渠道名称'}
-            ,{field:'linkman', title: '负责人'}
-            ,{field:'linkMobile', title: '负责人电话'}
-            ,{field:'settlementName', title: '结算方式'}
-            ,{field:'updateTime', title: '修改时间'}
-            ,{toolbar: '#handlebar', title: '操作'}
-        ];
-        //方法级渲染
-        table.render({
-            elem: '#LAY_table_productSku'
-            ,url: '${ctx}/channel/channel/channelList.json'
-            ,cols: [array]
-            ,id: 'testReload'
-            ,page: true
-            ,height: 'full-85'
-        });
-        function reload_table(){
-            var channelName = $('#channelName');
-            //执行重载
-            table.reload('testReload', {
-                page: {
-                    curr: 1 //重新从第 1 页开始
-                }
-                ,where: {
-                    se_channelName: channelName.val()
-                }
-            });
-        };
-
-        var addBoxIndex = -1;
-        $('#add').on('click', function() {
-            update_channel("add")
-        })
-
-        function update_channel(type,id){
-            if(addBoxIndex !== -1)
-                return;
-            //本表单通过ajax加载 --以模板的形式，当然你也可以直接写在页面上读取
-            url = baseUrl+'/product/productSkuDetail.html';
-            $.get(url, null, function(form) {
-                addBoxIndex = layer.open({
-                    type: 1,
-                    title: '新增商品',
-                    content: form,
-                    btn: ['保存', '取消'],
-                    shade:[0.8, '#393D49'],
-                    offset: '100px',
-                    area: ['600px', '400px'],
-                    maxmin: true,
-                    yes: function(index) {
-                        //触发表单的提交事件
-                        $('form.layui-form').find('button[lay-filter=update]').click();
-                    },
-                    full: function(elem) {
-                        var win = window.top === window.self ? window : parent.window;
-                        $(win).on('resize', function() {
-                            var $this = $(this);
-                            elem.width($this.width()).height($this.height()).css({
-                                top: 0,
-                                left: 0
-                            });
-                            elem.children('div.layui-layer-content').height($this.height() - 95);
-                        });
-                    },
-                    success: function(layero, index) {
-                        var form = layui.form;
-                        form.render();
-                        form.on('submit(update)', function(data) {
-                            $.ajax({
-                                url: '${ctx}/channel/channel/channelUpdate.do',
-                                type: 'post',
-                                data:data.field,
-                                dataType: 'json',
-                                success:function(data){
-                                    if(data.success){
-                                        layerTips.msg(data.msg);
-                                        location.reload(); //刷新
-                                    }else{
-                                        layerTips.msg(data.msg);
-                                    }
-                                }
-                            });
-                            return false;
-                        });
-                    }
-                });
-            });
+            }
+        },
+        tableRender:{
+            elem: 'LAY_table_productSku'
+            ,url: '/product/productSku/list'
+            ,cols: [tableArray]
+            ,id: 'productSkuReload'
+        },
+        tree:{
+            treeData:productTypeTree,
+            clickFunction:function(item){
+                console.log($(item))
+                $("#typeId").val(item.typeId)
+                reload_table();
+            }
         }
+    })
+
+
+    function reload_table(){
+        baseConfig.layui.reloadTable({
+            renderId:'productSkuReload',
+            params:{
+                "keyword":$("#keyword").val(),
+                "typeId":$("#typeId").val()
+            }
+        })
+    }
+
+    $("#btnSearch").click(function () {
+        reload_table();
     });
+
+    var addBoxIndex = -1;
+    $('#add').on('click', function() {
+        update_productSku("add")
+    })
+    function update_productSku(type,id){
+        if(addBoxIndex !== -1)
+            return;
+        //本表单通过ajax加载 --以模板的形式，当然你也可以直接写在页面上读取
+        url = baseUrl+'/product/productSku/detail.html';
+        if("edit"==type){
+            url=url+"?id="+id
+            title = "编辑物品"
+        }else{
+            title = "新增物品"
+        }
+        $.get(url, null, function(form) {
+            addBoxIndex = layer.open({
+                type: 1,
+                title: title,
+                content: form,
+                btn: ['保存', '取消'],
+                shade:[0.8, '#393D49'],
+                offset: 'auto',
+                area: ['1000px', '650px'],
+                maxmin: true,
+                yes: baseConfig.layui.openyes,
+                full: function(elem) {
+                    baseConfig.ajaxFull(elem)
+                },
+                success: baseConfig.layui.opensuccess({
+                    submitId:"update",
+                    onSubmit:function(data) {
+                        baseConfig.ajax.post({
+                            url:'/product/productSku/update',
+                            data:data.field,
+                            success:function(data){
+                                if(data.success){
+                                    layerTips.msg(data.message);
+                                    layui.layer.closeAll('page');
+                                    reload_table(); //刷新
+                                }else{
+                                    layerTips.msg(data.message);
+                                }
+                            }
+                        })
+                    }
+                }),
+                end: function() {
+                    addBoxIndex = -1;
+                }
+            });
+        });
+    }
+
+    var tree = {}
+    layui.use(['tree', 'layer'], function(){
+        var layer = layui.layer,$ = layui.jquery;
+
+    });
+
 </script>
 </body>
 </html>
