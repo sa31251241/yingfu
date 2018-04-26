@@ -1,0 +1,152 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="base/common_head :: common_head">
+</head>
+<style>
+    .selected{
+        background-color: darkseagreen;
+    }
+</style>
+<body>
+    <div class="layui-row">
+        <div class="layui-col-xs3">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>物品分类</legend>
+            </fieldset>
+            <div style="display: inline-block; width: 200px; overflow: auto;">
+                <input type="hidden" id="typeId">
+                <ul id="productTypeTree"></ul>
+            </div>
+        </div>
+        <div class="layui-col-xs9">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>物品管理</legend>
+                <div class="layui-row">
+                    <div class="layui-col-md8">
+                        <div class="grid-demo grid-demo-bg1">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">物品名称/编码</label>
+                                    <div class="layui-input-inline">
+                                        <input type="tel" name="keyword" id="keyword"  autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <button id="skuSearch" class="layui-btn layui-btn-normal">搜索</button>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="productSkuList">
+                </div>
+                <table class="layui-table" id="LAY_table_productSku"  lay-filter="productSku">
+                </table>
+            </fieldset>
+        </div>
+    </div>
+</body>
+
+<script type="text/html" id="handlebar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+</script>
+<script>
+    var tableArray = [
+        { title: '序号', type:"numbers"}
+        ,{field:'skuCode',width:'150', title: '编码'}
+        ,{field:'name',width:'150', title: '名称'}
+        ,{field:'typeName',width:'100', title: '类别'}
+        ,{field:'brand',width:'100', title: '品牌'}
+        ,{field:'model', width:'100',title: '规格型号'}
+        ,{field:'vendorName',width:'100', title: '供应商'}
+        ,{field:'stocks', width:'120',title: '当前库存', templet: function(data){
+            if(isEmptyObj(data.stocks)){
+                return 0;
+            }else{
+                return data.stocks;
+            }
+        }}
+    ]
+
+    skuArray= new Array();
+
+    productTypeTree = {}
+    baseConfig.ajax.post({
+        url:"/product/productType/tree",
+        async: false,
+        data:{},
+        success:function(data){
+            productTypeTree = data;
+        }
+    })
+    baseConfig.layui.init({
+        use:['element', 'layer','tree', 'form', 'laydate','table'],
+        useTable:{
+            toolName:"productSku"
+        },
+        tableRender:{
+            elem: 'LAY_table_productSku'
+            ,url: '/product/productSku/list'
+            ,cols: [tableArray]
+            ,id: 'productSkuReload'
+        },
+        tree:{
+            treeData:productTypeTree,
+            clickFunction:function(item){
+                console.log($(item))
+                $("#typeId").val(item.typeId)
+                reload_table();
+            }
+        }
+    })
+
+
+    function reload_table(){
+        baseConfig.layui.reloadTable({
+            renderId:'productSkuReload',
+            params:{
+                "keyword":$("#keyword").val(),
+                "typeId":$("#typeId").val()
+            }
+        })
+        $('table.layui-table').bind("click",skuTableClick);
+        clearSelected();
+    }
+
+    $("#skuSearch").click(function () {
+        reload_table();
+    });
+
+
+    var skuTable =$('table.layui-table');
+    skuTable.click(function (event) {
+        skuTableClick(event);
+    });
+
+    function skuTableClick(event){
+        var data = $(event.target).closest("tr")[0];
+        var skuCode = $(data).find("td[data-field='skuCode'] div.layui-table-cell").html();
+        var hasSelected = true;
+        for(var i= 0;i<skuArray.length;i++){
+            if(skuArray[i].skuCode == skuCode) {
+                $(data).removeClass("selected");
+                skuArray.splice(i,1);
+                hasSelected = false;
+                break;
+            }
+        }
+        if(hasSelected){
+            $(data).addClass("selected");
+            var name = $(data).find("td[data-field='name'] div.layui-table-cell").html();
+            var typeName = $(data).find("td[data-field='typeName'] div.layui-table-cell").html();
+            var brand = $(data).find("td[data-field='brand'] div.layui-table-cell").html();
+            var model = $(data).find("td[data-field='model'] div.layui-table-cell").html();
+            var vendorName = $(data).find("td[data-field='vendorName'] div.layui-table-cell").html();
+            var stocks = $(data).find("td[data-field='stocks'] div.layui-table-cell").html();
+            skuArray.push({skuCode:skuCode,name:name,typeName:typeName,brand:brand,model:model,vendorName:vendorName,stocks:stocks});
+        }
+        $("#productSkuList").val(JSON.stringify(skuArray));
+    }
+
+    function clearSelected(){
+        skuArray = new Array();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="base/common_head :: common_head">
+</head>
+<body>
+<div th:include="base/common_js :: common_js"></div>
+<script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>盘点单管理</legend>
+</fieldset>
+<div class="layui-row">
+    <form class="layui-form layui-form-pane">
+        <div class="layui-col-md10">
+            <div class="layui-form-item layui-col-md10" >
+                <div class="layui-col-md3" style="margin-left: 10px;">
+                    <div class="layui-input-inline">
+                        <input name="date" id="invCheckSearchDate" placeholder="盘点起止时间" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md2">
+                    <div class="layui-form-item">
+                        <div class="layui-input-inline">
+                            <select name="takeUserId" id = "takeUserId">
+                                <option value="">操作员</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md2">
+                    <div class="layui-input-inline">
+                        <span id="btnSearch" class="layui-btn layui-btn-normal">搜索</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="layui-col-md2">
+        <div class="layui-btn-group" style="float:left">
+            <button class="layui-btn" id="add">新增盘点单</button>
+        </div>
+    </div>
+</div>
+<table class="layui-table" id="LAY_table_invCheck"  lay-filter="invCheck">
+</table>
+<script type="text/html" id="handlebar">
+    {{# if(d.status==0){ }}
+        <a class="layui-btn layui-btn-xs" lay-event="view">查看</a>
+        <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{# } }}
+    {{# if(d.status==1){ }}
+        <a class="layui-btn layui-btn-xs" lay-event="view">查看</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{# } }}
+</script>
+<script>
+    var tableArray = [
+        { title: '序号', type:"numbers"}
+        ,{field:'id', title: '盘点单编号'}
+        ,{field:'date', title: '盘点日期'}
+        ,{field:'userName', title: '操作员'}
+        ,{toolbar: '#handlebar', title: '操作'}
+    ]
+
+    layui.use(['form','laydate'], function() {
+        var form = layui.form;
+        form.render();
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#invCheckSearchDate',
+            range:'~'
+        });
+    });
+
+    baseConfig.layui.init({
+        use:['element', 'layer', 'form', 'laydate','table'],
+        useTable:{
+            toolName:"invCheck",
+            onTool:function (obj) {
+                var data = obj.data;
+                if (obj.event === 'del') {
+                    layer.confirm('确认删除该盘点单吗？', function(index){
+                        layer.close(index);
+                        baseConfig.ajax.post({
+                            url:"/stock/invCheck/delete",
+                            data:{
+                                id:data.id
+                            },
+                            success:function(data){
+                                if(data.success){
+                                    layerTips.msg(data.message);
+                                    reload_invCheck_table(); //刷新
+                                }else{
+                                    layerTips.msg(data.message);
+                                }
+                            }
+                        })
+                    });
+                } else if (obj.event === 'edit') {
+                    update_invCheck("edit",data.id)
+                } else if (obj.event === 'view') {
+                    update_invCheck("view",data.id)
+                }
+            }
+        },
+        tableRender:{
+            elem: 'LAY_table_invCheck'
+            ,url: '/stock/invCheck/list'
+            ,cols: [tableArray]
+            ,id: 'invCheckReload'
+        }
+    })
+
+    function reload_invCheck_table() {
+        var data = {};
+        var invCheckDate = $("#invCheckSearchDate").val();
+        if(!isEmptyString(invCheckDate)){
+            var dateArray = invCheckDate.split("~");
+            var startDate = $.trim(dateArray[0]);
+            var endDate = $.trim(dateArray[1]);
+            data.startDate = startDate;
+            data.endDate = endDate;
+        }else{
+            data.startDate = "";
+            data.endDate = "";
+        }
+        data.status = $("#invCheckStatus").val();
+        data.vendorId = $("#invCheckVendorId").val();
+        baseConfig.layui.reloadTable({
+            renderId:'invCheckReload',
+            params:data
+        })
+    }
+    
+    $("#btnSearch").click(function () {
+        reload_invCheck_table();
+    });
+
+    var addBoxIndex = -1;
+    $('#add').on('click', function() {
+        update_invCheck("add")
+    })
+    function update_invCheck(type,id){
+        if(addBoxIndex !== -1)
+            return;
+        //本表单通过ajax加载 --以模板的形式，当然你也可以直接写在页面上读取
+        url = baseUrl+'/stock/invCheck/detail.html';
+        handleBtn = ['保存', '取消']
+        if("edit"==type){
+            url=url+"?type=edit&id="+id
+            title = "编辑盘点单"
+        }if("view"==type){
+            url=url+"?type=view&id="+id
+            title = "查看盘点单"
+            handleBtn = ['确定']
+        }else{
+            title = "新增盘点单"
+        }
+        $.get(url, null, function(form) {
+            addBoxIndex = layer.open({
+                type: 1,
+                title: title,
+                content: form,
+                btn: handleBtn,
+                shade:[0.8, '#393D49'],
+                offset: 'auto',
+                area: ['1000px', '600px'],
+                maxmin: true,
+                yes: baseConfig.layui.openyes,
+                full: function(elem) {
+                    baseConfig.ajaxFull(elem)
+                },
+                success: baseConfig.layui.opensuccess({
+                    submitId:"update",
+                    onSubmit:function(data) {
+                        if(type == "view"){
+                            layui.layer.closeAll('page');
+                            return false;
+                        }
+                        var invCheckDetailList = [];
+                        $('#invCheckDetailTable tbody tr').each(function(){
+                            var stocks = parseFloat($(this).find('.detail_stocks').val());
+                            invCheckDetailList.push({
+                                productSkuCode:$(this).find('.detail_productSkuCode').html(),
+                                productSkuName:$(this).find('.detail_productSkuName').html(),
+                                productTypeName:$(this).find('.detail_productTypeName').html(),
+                                brand:$(this).find('.detail_brand').html(),
+                                model:$(this).find('.detail_model').html(),
+                                vendorName:$(this).find('.detail_vendorName').html(),
+                                stocks:stocks,
+                                checkQuantity:parseFloat($(this).find('.detail_checkQuantity').val()),
+                                diffQuantity:$(this).find('.detail_diffQuantity').html()
+                            })
+                        })
+                        dataField = data.field;
+                        dataField.invCheckDetailList = invCheckDetailList
+                        baseConfig.ajax.post({
+                            url:'/stock/invCheck/update',
+                            data:dataField,
+                            success:function(data){
+                                if(data.success){
+                                    layerTips.msg(data.message);
+                                    layui.layer.closeAll('page');
+                                    reload_invCheck_table(); //刷新
+                                }else{
+                                    layerTips.msg(data.message);
+                                }
+                            }
+                        })
+                    }
+                }),
+                end: function() {
+                    addBoxIndex = -1;
+                }
+            });
+        });
+    }
+
+</script>
+</body>
+</html>
