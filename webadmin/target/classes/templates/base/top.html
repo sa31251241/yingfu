@@ -1,0 +1,19 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="top">
+    <div class="layui-header">
+        <div class="layui-logo">Quanyi ADMIN</div>
+        <ul class="layui-nav layui-layout-right kit-nav">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://m.zhengjinfan.cn/images/0.jpg" class="layui-nav-img">ADMIN
+                </a>
+                <dl class="layui-nav-child">
+                    <input type="hidden" id="userId"/>
+                    <dd><a id="revisePassword" href="javascript:;">修改密码</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="${logoutUrl}"><i class="fa fa-sign-out" aria-hidden="true"></i> 注销</a></li>
+        </ul>
+    </div>
+    <input>
+</div>

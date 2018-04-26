@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaojun.webadmin.product.mapper.ProductTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.liaojun.webadmin.product.model.ProductType" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="VARCHAR" />
+    <result column="pname" property="pname" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="findList" resultMap="BaseResultMap">
+    select tpt1.*,tpt2.name pname from t_product_type tpt1 left join t_product_type tpt2 on tpt1.pid=tpt2.id
+    where 1 = 1
+    <if test="productType != null">
+      <if test="productType.name != null">
+          and name LIKE CONCAT('%',#{productType.name},'%')
+      </if>
+    </if>
+    <if test="sortRequest != null">
+      order by ${sortRequest.sortKey}  ${sortRequest.sortDirection}
+    </if>
+    <if test="pageRequest != null">
+      limit ${pageRequest.page}, ${pageRequest.limit}
+    </if>
+  </select>
+
+  <select id="findListCount" resultType="int">
+    select count(1) from t_product_type tpt1 left join t_product_type tpt2 on tpt1.pid=tpt2.id
+    where 1 = 1
+    <if test="productType != null">
+      <if test="productType.name != null">
+        and name LIKE CONCAT('%',#{productType.name},'%')
+      </if>
+    </if>
+  </select>
+
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select tpt1.*,tpt2.name pname from t_product_type tpt1 left join t_product_type tpt2 on tpt1.pid=tpt2.id
+    where tpt1.id = #{id}
+  </select>
+</mapper>

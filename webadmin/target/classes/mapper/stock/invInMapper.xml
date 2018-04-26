@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaojun.webadmin.stock.mapper.InvInMapper" >
+  <resultMap id="BaseResultMap" type="com.liaojun.webadmin.stock.model.InvIn" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="vendor_id" property="vendorId" jdbcType="VARCHAR" />
+    <result column="vendor_name" property="vendorName" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="date" property="date" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="total_price" property="totalPrice" jdbcType="DECIMAL" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="invInDetailResultMap" type="com.liaojun.webadmin.stock.model.InvIn" extends="BaseResultMap" >
+    <collection property="invInDetailList" ofType="com.liaojun.webadmin.stock.model.InvInDetail" resultMap="detailResultMap"/>
+  </resultMap>
+
+  <resultMap id="detailResultMap" type="com.liaojun.webadmin.stock.model.InvInDetail" >
+    <id column="detail_id" property="id" jdbcType="VARCHAR" />
+    <result column="inv_in_id" property="invInId" jdbcType="VARCHAR" />
+    <result column="product_sku_id" property="productSkuId" jdbcType="VARCHAR" />
+    <result column="product_sku_code" property="productSkuCode" jdbcType="VARCHAR" />
+    <result column="product_sku_name" property="productSkuName" jdbcType="VARCHAR" />
+    <result column="detail_quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="unit_price" property="unitPrice" jdbcType="DECIMAL" />
+    <result column="sub_total" property="subTotal" jdbcType="DECIMAL" />
+  </resultMap>
+
+
+  <select id="findList" resultMap="BaseResultMap">
+    select tii.*,tv.name vendor_name from t_invIn tii left join t_vendor  tv on tii.vendor_id=tv.id
+    where 1 = 1
+    <if test="invIn != null">
+      <if test="invIn.vendorId != null">
+          and tii.vendor_id=#{invIn.vendorId}
+      </if>
+      <if test="invIn.status != null">
+        and tii.status = ${invIn.status}
+      </if>
+      <if test="invIn.startDate != null">
+        <![CDATA[ AND tii.date > #{invIn.startDate} ]]>
+      </if>
+      <if test="invIn.endDate != null">
+        <![CDATA[ AND tii.date < #{invIn.endDate} ]]>
+      </if>
+    </if>
+    <if test="sortRequest != null">
+      order by ${sortRequest.sortKey}  ${sortRequest.sortDirection}
+    </if>
+    <if test="pageRequest != null">
+      limit ${pageRequest.page}, ${pageRequest.limit}
+    </if>
+  </select>
+
+  <select id="findListCount" resultType="int">
+    select count(1) from t_invIn tii left join t_vendor  tv on tii.vendor_id=tv.id
+    where 1 = 1
+    <if test="invIn != null">
+      <if test="invIn.vendorId != null">
+        and tii.vendor_id=#{invIn.vendorId}
+      </if>
+      <if test="invIn.status != null">
+        and tii.status = ${invIn.status}
+      </if>
+      <if test="invIn.startDate != null">
+        <![CDATA[ AND tii.date >= #{invIn.startDate} ]]>
+      </if>
+      <if test="invIn.endDate != null">
+        <![CDATA[ AND tii.date <= #{invIn.endDate} ]]>
+      </if>
+    </if>
+  </select>
+
+  <select id="findById" resultMap="invInDetailResultMap" parameterType="java.lang.String" >
+    select tii.*,tiid.id detail_id,tiid.product_sku_code,tiid.product_sku_name,tiid.quantity detail_quantity,
+    tiid.unit_price,tiid.sub_total,tv.name vendor_name from t_invIn tii left join t_vendor  tv on tii.vendor_id=tv.id
+    left join t_invIn_detail tiid on tiid.inv_in_id = tii.id
+    where tii.id=#{id}
+  </select>
+</mapper>
