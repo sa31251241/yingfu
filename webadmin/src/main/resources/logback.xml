@@ -8,9 +8,7 @@
     </appender>
 
     <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${catalina.home}/logs/signin-web.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${catalina.home}/logs/signin-web_%d{yyyy-MM-dd}.log.gz</FileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout">
