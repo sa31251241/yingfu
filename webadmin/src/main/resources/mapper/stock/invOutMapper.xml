@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaojun.webadmin.stock.mapper.InvOutMapper" >
+  <resultMap id="BaseResultMap" type="com.liaojun.webadmin.stock.model.InvOut" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="date" property="date" jdbcType="VARCHAR" />
+    <result column="take_user_id" property="takeUserId" jdbcType="VARCHAR" />
+    <result column="take_user_name" property="takeUserName" jdbcType="VARCHAR" />
+    <result column="total_price" property="totalPrice" jdbcType="DECIMAL" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="invOutDetailResultMap" type="com.liaojun.webadmin.stock.model.InvOut" extends="BaseResultMap" >
+    <collection property="invOutDetailList" ofType="com.liaojun.webadmin.stock.model.InvOutDetail" resultMap="detailResultMap"/>
+  </resultMap>
+
+  <resultMap id="detailResultMap" type="com.liaojun.webadmin.stock.model.InvOutDetail" >
+    <id column="detail_id" property="id" jdbcType="VARCHAR" />
+    <result column="inv_out_id" property="invOutId" jdbcType="VARCHAR" />
+    <result column="product_sku_id" property="productSkuId" jdbcType="VARCHAR" />
+    <result column="product_sku_code" property="productSkuCode" jdbcType="VARCHAR" />
+    <result column="product_sku_name" property="productSkuName" jdbcType="VARCHAR" />
+    <result column="detail_quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="stocks" property="stocks" jdbcType="INTEGER" />
+    <result column="unit_price" property="unitPrice" jdbcType="DECIMAL" />
+    <result column="sub_total" property="subTotal" jdbcType="DECIMAL" />
+  </resultMap>
+
+
+  <select id="findList" resultMap="BaseResultMap">
+    select tio.*,tu.user_name take_user_name from t_invOut tio left join t_user tu on tio.take_user_id=tu.id
+    where 1 = 1
+    <if test="invOut != null">
+      <if test="invOut.status != null">
+        and tio.status = ${invOut.status}
+      </if>
+      <if test="invOut.startDate != null">
+        <![CDATA[ AND tio.date >= #{invOut.startDate} ]]>
+      </if>
+      <if test="invOut.endDate != null">
+        <![CDATA[ AND tio.date <= #{invOut.endDate} ]]>
+      </if>
+    </if>
+    <if test="sortRequest != null">
+      order by ${sortRequest.sortKey}  ${sortRequest.sortDirection}
+    </if>
+    <if test="pageRequest != null">
+      limit ${pageRequest.page}, ${pageRequest.limit}
+    </if>
+  </select>
+
+  <select id="findListCount" resultType="int">
+    select count(1) from t_invOut tio left join t_user tu on tio.take_user_id=tu.id
+    where 1 = 1
+    <if test="invOut != null">
+      <if test="invOut.status != null">
+        and tio.status = ${invOut.status}
+      </if>
+      <if test="invOut.startDate != null">
+        <![CDATA[ AND tio.date >= #{invOut.startDate} ]]>
+      </if>
+      <if test="invOut.endDate != null">
+        <![CDATA[ AND tio.date <= #{invOut.endDate} ]]>
+      </if>
+    </if>
+  </select>
+
+  <select id="findById" resultMap="invOutDetailResultMap" parameterType="java.lang.String" >
+    select tio.*,tis.quantity stocks,tiod.id detail_id,tiod.product_sku_code,tiod.product_sku_name,tiod.quantity detail_quantity,
+    tiod.unit_price,tiod.sub_total,tu.user_name take_user_name from t_invOut tio left join t_user  tu on tio.take_user_id=tu.id
+    left join t_invOut_detail tiod on tiod.inv_Out_id = tio.id
+    left join t_inv_sum tis on tis.id = tiod.product_sku_code
+    where tio.id=#{id}
+  </select>
+</mapper>

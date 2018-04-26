@@ -17,7 +17,7 @@
     where 1 = 1
     <if test="productType != null">
       <if test="productType.name != null">
-          and name LIKE CONCAT('%',#{productType.name},'%')
+          and tpt1.name LIKE CONCAT('%',#{productType.name},'%')
       </if>
     </if>
     <if test="sortRequest != null">
@@ -33,7 +33,7 @@
     where 1 = 1
     <if test="productType != null">
       <if test="productType.name != null">
-        and name LIKE CONCAT('%',#{productType.name},'%')
+        and tpt1.name LIKE CONCAT('%',#{productType.name},'%')
       </if>
     </if>
   </select>

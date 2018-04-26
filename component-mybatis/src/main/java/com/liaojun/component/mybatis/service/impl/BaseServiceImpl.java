@@ -238,8 +238,8 @@ public abstract class BaseServiceImpl<T> implements BaseService<T>{
         if(pageRequest!=null){
             pageRequest.setPage((pageRequest.getPage()-1)*pageRequest.getLimit());
         }
-        List<T> invInList = baseMapper.findList(t, pageRequest, sortRequest);
-        return new PageResult(pageRequest,baseMapper.findListCount(t),getBeanMapList(invInList));
+        List<T> list = baseMapper.findList(t, pageRequest, sortRequest);
+        return new PageResult(pageRequest,baseMapper.findListCount(t),getBeanMapList(list));
     }
 
     @Override

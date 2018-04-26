@@ -12,15 +12,10 @@ import com.liaojun.webadmin.stock.model.InvIn;
  * @Date: 2018/4/19 15:35
  */
 public interface IInvInService extends BaseService<InvIn> {
-    PageResult findList(InvIn invIn, PageRequest pageRequest, SortRequest sortRequest);
 
     InvIn findById(String id);
 
     Result saveOrUpdate(InvIn invIn);
-
-    Result saveInvIn(InvIn invIn);
-
-    Result updateInvIn(InvIn invIn);
 
     Result deleteInvIn(String id);
 

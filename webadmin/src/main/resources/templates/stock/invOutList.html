@@ -5,7 +5,7 @@
 <div th:include="base/common_js :: common_js"></div>
 <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-    <legend>入库单管理</legend>
+    <legend>出库单管理</legend>
 </fieldset>
 <div class="layui-row">
     <form class="layui-form layui-form-pane">
@@ -13,17 +13,16 @@
             <div class="layui-form-item layui-col-md10" >
                 <div class="layui-col-md3" style="margin-left: 10px;">
                     <div class="layui-input-inline">
-                        <input name="date" id="invInSearchDate" placeholder="入库起止时间" autocomplete="off" class="layui-input">
+                        <input name="date" id="invOutSearchDate" placeholder="出库起止时间" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-col-md2">
                     <div class="layui-form-item">
                         <div class="layui-input-inline">
-                            <select name="vendorId" id = "invInVendorId">
-                                <option value="">选择供应商</option>
-                                <div th:each="vendor:${vendorList}">
-                                    <option  th:value="${vendor.id}" th:text="${vendor.name}"></option>
-                                </div>
+                            <select name="status" id = "invOutStatus">
+                                <option value="">所有状态</option>
+                                <option value="0">待出库</option>
+                                <option value="1">已出库</option>
                             </select>
                         </div>
                     </div>
@@ -31,10 +30,8 @@
                 <div class="layui-col-md2">
                     <div class="layui-form-item">
                         <div class="layui-input-inline">
-                            <select name="status" id = "invInStatus">
-                                <option value="">所有状态</option>
-                                <option value="0">待入库</option>
-                                <option value="1">已入库</option>
+                            <select name="takeUserId" id = "takeUserId">
+                                <option value="">领用人</option>
                             </select>
                         </div>
                     </div>
@@ -53,12 +50,12 @@
         </div>
     </div>
 </div>
-<table class="layui-table" id="LAY_table_invIn"  lay-filter="invIn">
+<table class="layui-table" id="LAY_table_invOut"  lay-filter="invOut">
 </table>
 <script type="text/html" id="handlebar">
     {{# if(d.status==0){ }}
         <a class="layui-btn layui-btn-xs" lay-event="view">查看</a>
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="warehousing">入库</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="warehousing">出库</a>
         <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     {{# } }}
@@ -69,12 +66,13 @@
 <script>
     var tableArray = [
         { title: '序号', type:"numbers"}
-        ,{field:'id', title: '入库单编号'}
-        ,{field:'vendorName', title: '供应商'}
-        ,{field:'date', title: '入库日期'}
-        ,{field:'totalPrice', title: '总金额'}
-        ,{field:'status__dic', title: '状态'}
-        ,{toolbar: '#handlebar', title: '操作'}
+        ,{field:'id',width:'200', title: '出库单编号'}
+        ,{field:'type__dic',width:'120', title: '出库类型'}
+        ,{field:'date',width:'150', title: '出库日期'}
+        ,{field:'takeUserName',width:'150', title: '领用人'}
+        ,{field:'totalPrice',width:'100',title: '总金额'}
+        ,{field:'status__dic', width:'100',title: '状态'}
+        ,{toolbar: '#handlebar',width:'200', title: '操作'}
     ]
 
     layui.use(['form','laydate'], function() {
@@ -82,7 +80,7 @@
         form.render();
         var laydate = layui.laydate;
         laydate.render({
-            elem: '#invInSearchDate',
+            elem: '#invOutSearchDate',
             range:'~'
         });
     });
@@ -90,21 +88,21 @@
     baseConfig.layui.init({
         use:['element', 'layer', 'form', 'laydate','table'],
         useTable:{
-            toolName:"invIn",
+            toolName:"invOut",
             onTool:function (obj) {
                 var data = obj.data;
                 if (obj.event === 'del') {
-                    layer.confirm('确认删除该入库单吗？', function(index){
+                    layer.confirm('确认删除该出库单吗？', function(index){
                         layer.close(index);
                         baseConfig.ajax.post({
-                            url:"/stock/invIn/delete",
+                            url:"/stock/invOut/delete",
                             data:{
                                 id:data.id
                             },
                             success:function(data){
                                 if(data.success){
                                     layerTips.msg(data.message);
-                                    reload_invIn_table(); //刷新
+                                    reload_invOut_table(); //刷新
                                 }else{
                                     layerTips.msg(data.message);
                                 }
@@ -112,21 +110,21 @@
                         })
                     });
                 } else if (obj.event === 'edit') {
-                    update_invIn("edit",data.id)
+                    update_invOut("edit",data.id)
                 } else if (obj.event === 'view') {
-                    update_invIn("view",data.id)
+                    update_invOut("view",data.id)
                 } else if (obj.event === 'warehousing') {
-                    layer.confirm('是否确认入库？', function(index){
+                    layer.confirm('是否确认出库？', function(index){
                         layer.close(index);
                         baseConfig.ajax.post({
-                            url:"/stock/invIn/wareHousing",
+                            url:"/stock/invOut/outTreasury",
                             data:{
                                 id:data.id
                             },
                             success:function(data){
                                 if(data.success){
                                     layerTips.msg(data.message);
-                                    reload_invIn_table(); //刷新
+                                    reload_invOut_table(); //刷新
                                 }else{
                                     layerTips.msg(data.message);
                                 }
@@ -137,18 +135,18 @@
             }
         },
         tableRender:{
-            elem: 'LAY_table_invIn'
-            ,url: '/stock/invIn/list'
+            elem: 'LAY_table_invOut'
+            ,url: '/stock/invOut/list'
             ,cols: [tableArray]
-            ,id: 'invInReload'
+            ,id: 'invOutReload'
         }
     })
 
-    function reload_invIn_table() {
+    function reload_invOut_table() {
         var data = {};
-        var invInDate = $("#invInSearchDate").val();
-        if(!isEmptyString(invInDate)){
-            var dateArray = invInDate.split("~");
+        var invOutDate = $("#invOutSearchDate").val();
+        if(!isEmptyString(invOutDate)){
+            var dateArray = invOutDate.split("~");
             var startDate = $.trim(dateArray[0]);
             var endDate = $.trim(dateArray[1]);
             data.startDate = startDate;
@@ -157,37 +155,37 @@
             data.startDate = "";
             data.endDate = "";
         }
-        data.status = $("#invInStatus").val();
-        data.vendorId = $("#invInVendorId").val();
+        data.status = $("#invOutStatus").val();
+        data.vendorId = $("#invOutVendorId").val();
         baseConfig.layui.reloadTable({
-            renderId:'invInReload',
+            renderId:'invOutReload',
             params:data
         })
     }
     
     $("#btnSearch").click(function () {
-        reload_invIn_table();
+        reload_invOut_table();
     });
 
     var addBoxIndex = -1;
     $('#add').on('click', function() {
-        update_invIn("add")
+        update_invOut("add")
     })
-    function update_invIn(type,id){
+    function update_invOut(type,id){
         if(addBoxIndex !== -1)
             return;
         //本表单通过ajax加载 --以模板的形式，当然你也可以直接写在页面上读取
-        url = baseUrl+'/stock/invIn/detail.html';
+        url = baseUrl+'/stock/invOut/detail.html';
         handleBtn = ['保存', '取消']
         if("edit"==type){
             url=url+"?type=edit&id="+id
-            title = "编辑入库单"
+            title = "编辑出库单"
         }if("view"==type){
             url=url+"?type=view&id="+id
-            title = "查看入库单"
+            title = "查看出库单"
             handleBtn = ['确定']
         }else{
-            title = "新增入库单"
+            title = "新增出库单"
         }
         $.get(url, null, function(form) {
             addBoxIndex = layer.open({
@@ -210,12 +208,12 @@
                             layui.layer.closeAll('page');
                             return false;
                         }
-                        var invInDetailList = [];
-                        $('#invInDetailTable tbody tr').each(function(){
+                        var invOutDetailList = [];
+                        $('#invOutDetailTable tbody tr').each(function(){
                             var quantity = parseFloat($(this).find('.detail_quantity').val());
                             var unitPrice = parseFloat($(this).find('.detail_unitPrice').val());
                             var subTotal = (quantity * unitPrice);
-                            invInDetailList.push({
+                            invOutDetailList.push({
                                 productSkuCode:$(this).find('.detail_productSkuCode').html(),
                                 productSkuName:$(this).find('.detail_productSkuName').html(),
                                 quantity:quantity,
@@ -224,15 +222,15 @@
                             })
                         })
                         dataField = data.field;
-                        dataField.invInDetailList = invInDetailList
+                        dataField.invOutDetailList = invOutDetailList
                         baseConfig.ajax.post({
-                            url:'/stock/invIn/update',
+                            url:'/stock/invOut/update',
                             data:dataField,
                             success:function(data){
                                 if(data.success){
                                     layerTips.msg(data.message);
                                     layui.layer.closeAll('page');
-                                    reload_invIn_table(); //刷新
+                                    reload_invOut_table(); //刷新
                                 }else{
                                     layerTips.msg(data.message);
                                 }

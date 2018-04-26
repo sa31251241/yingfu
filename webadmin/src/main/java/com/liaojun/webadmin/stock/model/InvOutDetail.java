@@ -1,6 +1,8 @@
 package com.liaojun.webadmin.stock.model;
 
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 
 /**
@@ -8,6 +10,7 @@ import java.math.BigDecimal;
  * @Author: yangzi
  * @Date: 2018/4/19 14:49
  */
+@Table(name = "t_invOut_detail")
 public class InvOutDetail {
 
     @Id
@@ -23,9 +26,12 @@ public class InvOutDetail {
 
     private Integer quantity;
 
+    @Transient
+    private Integer stocks;
+
     private BigDecimal unitPrice;
 
-    private BigDecimal subtotal;
+    private BigDecimal subTotal;
 
     public String getId() {
         return id;
@@ -67,6 +73,14 @@ public class InvOutDetail {
         this.productSkuName = productSkuName;
     }
 
+    public Integer getStocks() {
+        return stocks;
+    }
+
+    public void setStocks(Integer stocks) {
+        this.stocks = stocks;
+    }
+
     public Integer getQuantity() {
         return quantity;
     }
@@ -83,11 +97,11 @@ public class InvOutDetail {
         this.unitPrice = unitPrice;
     }
 
-    public BigDecimal getSubtotal() {
-        return subtotal;
+    public BigDecimal getSubTotal() {
+        return subTotal;
     }
 
-    public void setSubtotal(BigDecimal subtotal) {
-        this.subtotal = subtotal;
+    public void setSubTotal(BigDecimal subTotal) {
+        this.subTotal = subTotal;
     }
 }

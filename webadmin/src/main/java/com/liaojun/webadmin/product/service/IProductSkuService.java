@@ -20,4 +20,6 @@ public interface IProductSkuService extends BaseService<ProductSku>{
     Result saveOrUpdate(ProductSku productSku,ProductSkuConfig productSkuConfig);
 
     Result deleteProductSku(String id);
+
+    PageResult findWarningList(ProductSku productSku,String keyword, PageRequest pageRequest);
 }

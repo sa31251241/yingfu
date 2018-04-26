@@ -72,11 +72,9 @@ public class InvInServiceImpl extends BaseServiceImpl<InvIn> implements IInvInSe
         }
         setSumAttr(invIn);
         if(isNew){
-            saveInvIn(invIn);
-            return ResultBuilder.saveSuccessResult();
+            return saveInvIn(invIn);
         }else{
-            updateInvIn(invIn);
-            return ResultBuilder.saveSuccessResult();
+            return updateInvIn(invIn);
         }
     }
 
@@ -161,9 +159,7 @@ public class InvInServiceImpl extends BaseServiceImpl<InvIn> implements IInvInSe
         return invInDetails;
     }
 
-    @Override
-    @Transactional
-    public Result saveInvIn(InvIn invIn){
+    private Result saveInvIn(InvIn invIn){
         invIn.setId(IdGenerateUtil.getInstance().nextId().toString());
         invIn.setStatus(SysConstants.INVIN_STATUS.INIT);
         super.save(invIn);
@@ -172,12 +168,10 @@ public class InvInServiceImpl extends BaseServiceImpl<InvIn> implements IInvInSe
             invInDetail.setInvInId(invIn.getId());
             invInDetailService.save(invInDetail);
         }
-        return Result.EMPTY_SUCC_RESULT;
+        return ResultBuilder.saveSuccessResult();
     }
 
-    @Override
-    @Transactional
-    public Result updateInvIn(InvIn invIn){
+    private Result updateInvIn(InvIn invIn){
         //更新住信息
         super.update(invIn);
         //删除原入单详情
@@ -188,7 +182,7 @@ public class InvInServiceImpl extends BaseServiceImpl<InvIn> implements IInvInSe
             invInDetail.setInvInId(invIn.getId());
             invInDetailService.save(invInDetail);
         }
-        return Result.EMPTY_SUCC_RESULT;
+        return ResultBuilder.updateSuccessResult();
     }
 
 

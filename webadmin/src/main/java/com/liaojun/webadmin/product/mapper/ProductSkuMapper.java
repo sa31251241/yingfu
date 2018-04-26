@@ -24,4 +24,7 @@ public interface ProductSkuMapper extends IBaseMapper<ProductSku> {
     @Override
     Integer findListCount(@Param("productSku") ProductSku productSku);
 
+    List<ProductSku> findWarningList(@Param("productSku") ProductSku productSku,@Param("pageRequest") PageRequest pageRequest, @Param("sortRequest") SortRequest sortRequest);
+
+    Integer findWarningListCount(@Param("productSku") ProductSku productSku);
 }
