@@ -3,6 +3,11 @@
 </head>
 <div th:include="base/common_js :: common_js"></div>
 <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<style>
+    dd{
+        margin-left: 35px;
+    }
+</style>
 <body>
 <div class="layui-layout layui-layout-admin kit-layout-admin">
     <div th:include="base/top :: top">
@@ -13,14 +18,28 @@
             <div class="kit-side-fold"><i class="fa fa-navicon" aria-hidden="true"></i></div>
             <ul class="layui-nav layui-nav-tree" lay-filter="kitNavbar" kit-navbar>
                 <li class="layui-nav-item">
-                    <a class="" href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>库存管理</span></a>
+                    <a class="" href="javascript:;"><i class="layui-icon" style="font-size: 20px;">&#xe68e;</i><span>&nbsp;&nbsp;&nbsp;&nbsp;首页</span></a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="product/productType/list.html" data-icon="&#xe658" data-title="物品分类管理" kit-target data-id='1'><i class="layui-icon">&#xe658;</i><span>物品分类管理</span></a></dd>
-                        <dd><a href="javascript:;" data-url="product/productSku/list.html" data-icon="&#xe658" data-title="物品管理" kit-target data-id='2'><i class="layui-icon">&#xe658;</i><span>物品管理</span></a></dd>
-                        <dd><a href="javascript:;" data-url="product/vendor/list.html" data-icon="&#xe658" data-title="供应商管理" kit-target data-id='3'><i class="layui-icon">&#xe658;</i><span>供应商管理</span></a></dd>
-                        <dd><a href="javascript:;" data-url="stock/invIn/list.html" data-icon="&#xe658" data-title="入库单" kit-target data-id='4'><i class="layui-icon">&#xe658;</i><span>入库单</span></a></dd>
-                        <dd><a href="javascript:;" data-url="stock/invOut/list.html" data-icon="&#xe658" data-title="出库单" kit-target data-id='5'><i class="layui-icon">&#xe658;</i><span>出库单</span></a></dd>
-                        <dd><a href="javascript:;" data-url="product/vendor/list.html" data-icon="&#xe658" data-title="供应商管理" kit-target data-id='6'><i class="layui-icon">&#xe658;</i><span>供应商管理</span></a></dd>
+                        <dd><a href="javascript:;" data-url="main.html" data-icon="&#xe658" data-title="工作台" kit-target data-id='1'><span>供应商管理</span></a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;"><i class="layui-icon" style="font-size: 20px;">&#xe63c;</i><span>&nbsp;&nbsp;&nbsp;&nbsp;客户管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-url="http://www.baidu.com" data-icon="&#xe658" data-title="客户管理" kit-target data-id='1'><span>客户管理</span></a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;"><i class="fa fa-plug" style="font-size: 20px;" aria-hidden="true"></i><span>&nbsp;&nbsp;&nbsp;&nbsp;库存管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd></span><a href="javascript:;" data-url="product/vendor/list.html" data-icon="&#xe658" data-title="供应商管理" kit-target data-id='1'><span>供应商管理</span></a></dd>
+                        <dd><a href="javascript:;" data-url="product/productType/list.html" data-icon="&#xe658" data-title="物品分类管理" kit-target data-id='2'><span>物品分类管理</span></a></dd>
+                        <dd><a href="javascript:;" data-url="product/productSku/list.html" data-icon="&#xe658" data-title="物品管理" kit-target data-id='3'><span>物品管理</span></a></dd>
+                        <dd><a href="javascript:;" data-url="stock/inv/list.html" data-icon="&#xe658" data-title="当前库存" kit-target data-id='4'><span>当前库存</span></a></dd>
+                        <dd><a href="javascript:;" data-url="stock/invIn/list.html" data-icon="&#xe658" data-title="入库单" kit-target data-id='5'><span>入库单</span></a></dd>
+                        <dd><a href="javascript:;" data-url="stock/invOut/list.html" data-icon="&#xe658" data-title="出库单" kit-target data-id='6'><span>出库单</span></a></dd>
+                        <dd><a href="javascript:;" data-url="stock/invCheck/list.html" data-icon="&#xe658" data-title="盘点单" kit-target data-id='7'><span>盘点单</span></a></dd>
+                        <dd><a href="javascript:;" data-url="stock/invWarning/list.html" data-icon="&#xe658" data-title="缺货统计" kit-target data-id='8'><span>缺货统计</span></a></dd>
                     </dl>
                 </li>
             </ul>

@@ -19,7 +19,6 @@ public class IndexController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/")
     public String index(Model model){
         List<User> userList = userService.getList();
         model.addAttribute("userList",userList);
@@ -27,7 +26,7 @@ public class IndexController {
     }
     @RequestMapping("/main.html")
     public String main(Model model){
-        return "base/main";
+        return "index/main";
     }
 
 }

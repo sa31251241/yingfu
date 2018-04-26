@@ -44,10 +44,10 @@
         and tii.status = ${invIn.status}
       </if>
       <if test="invIn.startDate != null">
-        <![CDATA[ AND tii.date > #{invIn.startDate} ]]>
+        <![CDATA[ AND tii.date >= #{invIn.startDate} ]]>
       </if>
       <if test="invIn.endDate != null">
-        <![CDATA[ AND tii.date < #{invIn.endDate} ]]>
+        <![CDATA[ AND tii.date <= #{invIn.endDate} ]]>
       </if>
     </if>
     <if test="sortRequest != null">

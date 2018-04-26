@@ -87,6 +87,28 @@ public class ProductSkuServiceImpl extends BaseServiceImpl<ProductSku> implement
         return ResultBuilder.deleteSuccessResult();
     }
 
+    /**
+     * 物品缺货统计
+     * @param bean
+     * @param pageRequest
+     * @return
+     */
+    @Override
+    public PageResult findWarningList(ProductSku productSku,String keyword, PageRequest pageRequest) {
+        if(!StringUtil.isEmpty(keyword)){
+            productSku.setName(keyword);
+            productSku.setSkuCode(keyword);
+        }
+        if("-1".equals(productSku.getTypeId())){
+            productSku.setTypeId(null);
+        }
+        if(pageRequest!=null){
+            pageRequest.setPage((pageRequest.getPage()-1)*pageRequest.getLimit());
+        }
+        List<ProductSku> productSkuList = productSkuMapper.findWarningList(productSku,pageRequest,null);
+        return new PageResult(pageRequest,productSkuMapper.findWarningListCount(productSku),getBeanMapList(productSkuList));
+    }
+
     private Result checkParams(ProductSku productSku,ProductSkuConfig productSkuConfig, boolean isNew) {
         if(StringUtil.isEmpty(productSku.getSkuCode())){
             return ResultBuilder.checkFailedResult("物品编号必须输入");

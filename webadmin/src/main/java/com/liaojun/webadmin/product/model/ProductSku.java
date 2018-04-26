@@ -42,6 +42,15 @@ public class ProductSku extends BaseModel{
 
     private String remark;
 
+    /**
+     * 库存数
+     */
+    @Transient
+    private Integer stocks;
+
+    @Transient
+    private ProductSkuConfig productSkuConfig;
+
 
     public String getId() {
         return id;
@@ -131,4 +140,19 @@ public class ProductSku extends BaseModel{
         this.remark = remark;
     }
 
+    public Integer getStocks() {
+        return stocks;
+    }
+
+    public void setStocks(Integer stocks) {
+        this.stocks = stocks;
+    }
+
+    public ProductSkuConfig getProductSkuConfig() {
+        return productSkuConfig;
+    }
+
+    public void setProductSkuConfig(ProductSkuConfig productSkuConfig) {
+        this.productSkuConfig = productSkuConfig;
+    }
 }
