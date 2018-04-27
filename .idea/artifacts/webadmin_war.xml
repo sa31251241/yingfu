@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="webadmin:war">
+    <output-path>$PROJECT_DIR$/webadmin/target</output-path>
+    <root id="archive" name="yingfu.war">
+      <element id="artifact" artifact-name="webadmin:war exploded" />
+    </root>
+  </artifact>
+</component>
