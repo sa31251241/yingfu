@@ -35,13 +35,14 @@
 </script>
 <script>
     var tableArray = [
-        { title: '序号', type:"numbers"}
-        ,{field:'cusName', title: '客户名称'}
-        ,{field:'cusSex', title: '性别'}
-        ,{field:'cusPhone', title: '联系方式'}
-        ,{field:'cusAddress', title: '住址'}
-        ,{field:'addTime', title: '添加时间'}
-        ,{toolbar: '#handlebar', title: '操作'}
+        { title: '序号', type:"numbers",align:'center'}
+        ,{field:'cusName', title: '客户名称',align:'center'}
+        ,{field:'cusSex', title: '性别',align:'center'}
+        ,{field:'cusPhone', title: '联系方式',align:'center'}
+        ,{field:'cusAddress', title: '住址',align:'center'}
+        ,{field:'addTime', title: '添加时间',align:'center'}
+        ,{field:'remark',title:'备注',align:'center'}
+        ,{toolbar: '#handlebar', title: '操作',align:'center'}
     ]
     baseConfig.layui.init({
         use:['element', 'layer', 'form', 'laydate','table'],
@@ -53,7 +54,7 @@
                     layer.confirm('确认删除'+ data.name +'客户吗？', function(index){
                         layer.close(index);
                         baseConfig.ajax.post({
-                            url:"/product/customer/delete",
+                            url:"/customer/customer/delete",
                             data:{
                                 id:data.id
                             },
@@ -101,7 +102,7 @@
         if(addBoxIndex !== -1)
             return;
         //本表单通过ajax加载 --以模板的形式，当然你也可以直接写在页面上读取
-        url = baseUrl+'/product/customer/detail.html';
+        url = baseUrl+'/customer/customer/detail.html';
         if("edit"==type){
             url=url+"?id="+id
             title = "编辑客户"
@@ -126,7 +127,7 @@
                     submitId:"update",
                     onSubmit:function(data) {
                         baseConfig.ajax.post({
-                            url:'/product/customer/update',
+                            url:'/customer/customer/update',
                             data:data.field,
                             success:function(data){
                                 if(data.success){

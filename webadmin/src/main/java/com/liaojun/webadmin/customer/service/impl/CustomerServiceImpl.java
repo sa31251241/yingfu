@@ -1,41 +1,46 @@
 package com.liaojun.webadmin.customer.service.impl;
 
 import com.liaojun.component.base.common.model.Result;
-import com.liaojun.component.base.db.model.PageRequest;
-import com.liaojun.component.base.db.model.PageResult;
-import com.liaojun.component.base.db.model.SortRequest;
 import com.liaojun.component.base.service.ResultBuilder;
+import com.liaojun.component.base.util.DateUtil;
+import com.liaojun.component.base.util.ExcelUtil;
 import com.liaojun.component.base.util.StringUtil;
 import com.liaojun.component.mybatis.service.impl.BaseServiceImpl;
 import com.liaojun.webadmin.customer.mapper.CustomerMapper;
 import com.liaojun.webadmin.customer.model.Customer;
 import com.liaojun.webadmin.customer.service.CustomerService;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
 @Service
 public class CustomerServiceImpl extends BaseServiceImpl<Customer> implements CustomerService {
-    @Override
-    public Class getEntityClass() {
-        return Customer.class;
-    }
+
 
     @Autowired
     private CustomerMapper customerMapper;
 
     @Override
-    public Customer findById(String id) {
-        return customerMapper.findById(id);
+    public Class getEntityClass() {
+        return Customer.class;
     }
 
-    @Override
-    public PageResult findList(Customer customer, String keyword, SortRequest sortRequest, PageRequest pageRequest) {
-        if (!StringUtil.isEmpty(keyword)) {
-            customer.setCusName(keyword);
-        }
-        return super.findList(customer, pageRequest, sortRequest);
-    }
 
+
+
+
+    /**
+     * 修改客戶信息
+     * @param customer
+     * @return
+     */
     @Override
     public Result saveOrUpdate(Customer customer) {
         boolean isNew = false;
@@ -47,6 +52,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer> implements Cu
             return checkresult;
         }
         if (isNew) {
+            customer.setAddTime(DateUtil.newDateString());
             save(customer);
             return ResultBuilder.saveSuccessResult();
         } else {
@@ -55,8 +61,14 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer> implements Cu
         }
     }
 
+    /**
+     * 检验客户信息是否正确
+     * @param customer
+     * @param isNew
+     * @return
+     */
     private Result checkParams(Customer customer, boolean isNew) {
-        if (exist("id", customer.getId())) {
+        if (exist("cusName", customer.getCusName())) {
             if (isNew) {
                 return ResultBuilder.checkFailedResult("该客户已存在");
             }
@@ -76,4 +88,34 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer> implements Cu
         return Result.EMPTY_SUCC_RESULT;
     }
 
+    /**
+     * 删除客户
+     * @param id
+     * @return
+     */
+
+    @Override
+    public   Result customerDelete(String id){
+        delete(id);
+        return ResultBuilder.deleteSuccessResult();
+    }
+
+    @Override
+    public void customerExport(List data, HttpServletResponse response)  {
+        Map<String,String> map =new HashMap<>();
+        map.put("cus_id","编号");
+        map.put("cus_name","姓名");
+        map.put("cus_sex","性别");
+        map.put("cus_phone","电话");
+        map.put("cus_address","地址");
+        map.put("add_time","添加时间");
+        map.put("remark","备注");
+        HSSFWorkbook wb=ExcelUtil.getWorkbook(data,map);
+       try{
+           OutputStream outfile=response.getOutputStream();
+           wb.write(outfile);
+       }catch (Exception E){
+           E.printStackTrace();
+       }
+    }
 }

@@ -7,14 +7,6 @@
         </layout>
     </appender>
 
-    <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%date [%thread] %-5level %logger{50}:%L - %msg%n</pattern>
-        </layout>
-    </appender>
 
     <logger name="com.ibatis" level="DEBUG" />
     <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG" />
@@ -25,7 +17,6 @@
     <logger name="java.sql.PreparedStatement" level="DEBUG" />
 
     <root level="INFO">
-        <appender-ref ref="logfile"/>
         <appender-ref ref="stdout"/>
     </root>
 

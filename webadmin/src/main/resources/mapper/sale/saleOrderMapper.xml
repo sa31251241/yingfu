@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liaojun.webadmin.sale.mapper.SaleOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.liaojun.webadmin.sale.model.SaleOrder" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="customer_id" property="customer_id" jdbcType="VARCHAR" />
+    <result column="total_amount" property="total_amount" jdbcType="DECIMAL" />
+    <result column="discount" property="discount" jdbcType="DECIMAL" />
+    <result column="free_amount" property="free_amount" jdbcType="DECIMAL" />
+    <result column="final_amount" property="final_amount" jdbcType="DECIMAL" />
+    <result column="received_amount" property="received_amount" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="create_time" property="create_time" jdbcType="VARCHAR" />
+    <result column="create_user" property="create_user" jdbcType="VARCHAR" />
+    <result column="update_time" property="update_time" jdbcType="VARCHAR" />
+    <result column="update_user" property="update_user" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="phone" property="cusPhone" jdbcType="VARCHAR" />
+    <result column="arrearage" property="arrearage" jdbcType="VARCHAR" />
+    <result column="inv_status" property="invStatus" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="saleOrderResultMap" type="com.liaojun.webadmin.sale.model.SaleOrder" extends="BaseResultMap" >
+    <collection property="saleOrderDetailList" ofType="com.liaojun.webadmin.sale.model.SaleOrderDetail" resultMap="detailResultMap"/>
+  </resultMap>
+
+  <resultMap id="detailResultMap" type="com.liaojun.webadmin.sale.model.SaleOrderDetail" >
+    <id column="detail_id" property="id" jdbcType="VARCHAR" />
+    <result column="sale_order_id" property="SaleOrderid" jdbcType="VARCHAR" />
+    <result column="product_sku_code" property="productSkuCode" jdbcType="VARCHAR" />
+    <result column="product_sku_name" property="productSkuName" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="model" property="model" jdbcType="VARCHAR" />
+    <result column="product_type_name" property="productTypeName" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="sub_total" property="subTotal" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="stocks" property="stocks" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <select id="findList" resultMap="BaseResultMap">
+    select tso.*, (tso.final_amount-tso.received_amount) arrearage, tc.cus_name  customer_name  from t_sale_order tso left join t_customer tc on tso.customer_id=tc.cus_id
+    where 1 = 1
+    <if test="saleOrder != null">
+      <if test="saleOrder.status != null">
+        and tso.status = ${saleOrder.status}
+      </if>
+      <if test="saleOrder.startDate != null">
+        <![CDATA[ AND tos.date >= #{saleOrder.startDate} ]]>
+      </if>
+      <if test="saleOrder.endDate != null">
+        <![CDATA[ AND tos.date <= #{saleOrder.endDate} ]]>
+      </if>
+    </if>
+    <if test="sortRequest != null">
+      order by ${sortRequest.sortKey}  ${sortRequest.sortDirection}
+    </if>
+    <if test="pageRequest != null">
+      limit ${pageRequest.page}, ${pageRequest.limit}
+    </if>
+  </select>
+
+  <select id="findListCount" resultType="int">
+    select count(1) from t_sale_order tso left join t_customer tc on tso.customer_id=tc.cus_id
+    where 1 = 1
+    <if test="saleOrder != null">
+      <if test="saleOrder.status != null">
+        and tso.status = ${saleOrder.status}
+      </if>
+      <if test="saleOrder.startDate != null">
+        <![CDATA[ AND tso.date >= #{saleOrder.startDate} ]]>
+      </if>
+      <if test="saleOrder.endDate != null">
+        <![CDATA[ AND tos.date <= #{saleOrder.endDate} ]]>
+      </if>
+    </if>
+  </select>
+
+  <select id="findById" resultMap="saleOrderResultMap" parameterType="java.lang.String" >
+    SELECT tso.* ,
+		(tso.final_amount-tso.received_amount) arrearage,
+    tc.cus_address address,
+    tc.cus_phone phone,
+    tis.quantity stocks,
+    tsod.id detail_id,
+    tsod.product_sku_code ,
+    tsod.product_sku_name,
+    tsod.quantity quantity,
+    tsod.price ,
+    tsod.sub_total subTotal,
+    tsod.brand brand,
+    tsod.model model,
+    tc.cus_name  customer_name
+    from  t_sale_order tso
+    LEFT join  t_customer  tc on tso.customer_id=tc.cus_id
+    LEFT JOIN  t_sale_order_detail tsod on tsod.sale_order_id=tso.id
+    left JOIN  t_inv_sum  tis  on tis.id =tsod.product_sku_code
+    where tso.id=#{id}
+  </select>
+</mapper>

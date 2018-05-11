@@ -23,9 +23,6 @@ public class Role extends BaseModel {
 
     private String remark;
 
-    private Integer accessAll;
-
-    private Integer available;
 
     @Transient
     private List<Permission> permissions;
@@ -68,21 +65,5 @@ public class Role extends BaseModel {
 
     public void setPermissions(List<Permission> permissions) {
         this.permissions = permissions;
-    }
-
-    public Integer getAccessAll() {
-        return accessAll;
-    }
-
-    public void setAccessAll(Integer accessAll) {
-        this.accessAll = accessAll;
-    }
-
-    public Integer getAvailable() {
-        return available;
-    }
-
-    public void setAvailable(Integer available) {
-        this.available = available;
     }
 }

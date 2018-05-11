@@ -147,4 +147,18 @@ public class SysConstants extends ComponentBaseConstant{
         public static final Integer FINISH = 1;
     }
 
+
+
+    /**
+     * 订单状态
+     */
+    public static class SALEORDER_STATUS {
+        @ConstantAnnotation("未付款")
+        public static final String UNPAY = "0";
+        @ConstantAnnotation("未付清")
+        public static final String  UNPAID = "1";
+        @ConstantAnnotation("已付清")
+        public static final String PAIDOFF = "2";
+    }
+
 }

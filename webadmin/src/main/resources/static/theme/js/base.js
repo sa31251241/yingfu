@@ -71,7 +71,7 @@ baseConfig = {
                 type: 'get',
                 contentType:"application/json",
                 data:JSON.stringify({
-                    params:configure.date
+                    params:configure.data
                 }),
                 success:function(data){
                     configure.success(data)

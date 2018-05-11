@@ -13,7 +13,7 @@ public class Customer {
     //客户id
     @Id
     @Column(name = "cus_id")
-    private Integer id;
+    private String id;
     //客户姓名
     private String cusName;
     //客户性别
@@ -24,12 +24,14 @@ public class Customer {
     private String cusAddress;
     //  添加时间
     private String addTime;
+    //备注
+    private String remark;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -73,16 +75,14 @@ public class Customer {
         this.addTime = addTime;
     }
 
-    public Customer(String cusName, String cusSex, String cusPhone, String cusAddress, String addTime) {
-        this.cusName = cusName;
-        this.cusSex = cusSex;
-        this.cusPhone = cusPhone;
-        this.cusAddress = cusAddress;
-        this.addTime = addTime;
+
+    public String getRemark() {
+        return remark;
     }
 
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
     public Customer() {
     }
-
-
 }

@@ -1,0 +1,39 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="base/common_head :: common_head">
+</head>
+<div style="margin: 15px;">
+    <form class="layui-form layui-form-pane">
+        <input type="hidden" name="id" value="" th:value="${customer?.id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">客户姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="cusName" th:value="${customer?.cusName}" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">客户性别</label>
+            <div class="layui-input-block">
+                <input type="text" name="cusSex" th:value="${customer?.cusSex}" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">联系方式</label>
+            <div class="layui-input-block">
+                <input type="tel" name="cusPhone" th:value="${customer?.cusPhone}" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">联系地址</label>
+            <div class="layui-input-block">
+                <input type="tel" name="cusAddress" th:value="${customer?.cusAddress}" placeholder="请输入"  lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block" >
+                <textarea name="remark" th:text="${customer?.remark}" placeholder="请输入内容" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <button lay-filter="update" lay-submit style="display: none;"></button>
+    </form>
+</div>

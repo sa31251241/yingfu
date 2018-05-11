@@ -1,0 +1,322 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="base/common_head :: common_head">
+</head>
+<div style="margin: 15px;">
+    <form class="layui-form layui-form-pane">
+        <input type="hidden" name="id" value="" th:value="${saleOrder?.id}">
+        <input type="hidden" id="operateType" th:value="${type}">
+        <div class="layui-row">
+            <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">购买客户</label>
+                        <div class="layui-input-inline">
+                            <select  id="cusName" name="customer_id" th:readonly="${type eq 'view'}" lay-filter="customer_name">
+                                <option value="">选择客户</option>
+                                <div th:each="customer:${takeUserIdList}">
+                                    <option th:selected="${customer.id eq saleOrder?.customer_id}"
+                                            th:value="${customer.id}" th:text="${customer.cusName}" ></option>
+                                </div>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">收货地址</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="address" th:readonly="${type eq 'view'}" id="saleOrderAddress"
+                               th:value="${saleOrder?.address}"  class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">联系电话</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cusPhone" th:readonly="${type eq 'view'}" id="saleOrderPhone"
+                               th:value="${saleOrder?.cusPhone}"  class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">出库日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="create_time" th:readonly="${type eq 'view'}" id="saleOrderDate"
+                               th:value="${saleOrder?.create_time}" placeholder="请输入" lay-verify="required"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <textarea name="remark" th:readonly="${type eq 'view'}" th:text="${saleOrder?.remark}"
+                              placeholder="请输入内容" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-row" th:if="${type ne 'view'}">
+                <div class="layui-col-md2">
+                    <div class="layui-btn-group" style="float:right">
+                        <span class="layui-btn" id="addProduct">添加商品</span>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="saleOrderDetailList">
+            <table class="layui-table" id="saleOrderDetailTable">
+                <thead>
+                <tr>
+                    <th align="center">商品编码</th>
+                    <th align="center">商品名</th>
+                    <th align="center">商标</th>
+                    <th align="center">商品规格</th>
+                    <th align="center">现库存数</th>
+                    <th align="center">出库数量</th>
+                    <th align="center">出库单价</th>
+                    <th align="center">小计</th>
+                    <th align="center">操作</th>
+                </tr>
+                <tr id="saleOrderDetailTemplate" style="display:none">
+                    <td class="detail_productSkuCode" style="text-align:center;">:productSkuCode</td>
+                    <td class="detail_productSkuName" style="text-align:center;">:productSkuName</td>
+                    <td class="detail_brand" style="text-align:center;">:brand</td>
+                    <td class="detail_model" style="text-align:center;">:model</td>
+                    <td class="detail_stocks" style="text-align:center;">:stocks</td>
+                    <td style="text-align:center;"><input class="detail_quantity" type='text' value=":quantity"
+                                                          style='border:none;text-align:center;background-color: cadetblue'
+                                                          size='5px'/></td>
+                    <td style="text-align:center;"><input class="detail_price" type='text' value=':price'
+                                                          style='border:none;text-align:center;background-color: cadetblue'
+                                                          size='5px'/></td>
+                    <td class="detail_subTotal" style="text-align:center">:subTotal</td>
+                    <td><a class="detail_delete" href="javascript:void(0)">删除</a></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="saleOrderDetail:${saleOrder?.saleOrderDetailList}">
+                    <td class="detail_productSkuCode" style="text-align:center;"
+                        th:text="${saleOrderDetail?.productSkuCode}">:productSkuCode
+                    </td>
+                    <td class="detail_productSkuName" style="text-align:center;"
+                        th:text="${saleOrderDetail?.productSkuName}">:productSkuName
+                    </td>
+                    <td class="detail_brand" style="text-align:center;" th:text="${saleOrderDetail?.brand}">
+                        :brand
+                    </td>
+                    <td class="detail_model" style="text-align:center;" th:text="${saleOrderDetail?.model}">
+                        :model
+                    </td>
+                    <td class="detail_stocks" style="text-align:center;"
+                        th:text="${saleOrderDetail.stocks == null?0:saleOrderDetail.stocks}">:stocks
+                    </td>
+                    <td style="text-align:center;"><input class="detail_quantity" type='text'
+                                                          th:value="${saleOrderDetail?.quantity}" value=":quantity"
+                                                          style='border:none;text-align:center;background-color: #00F7DE'
+                                                          size='5px'/></td>
+                    <td style="text-align:center;"><input class="detail_price" type='text' name="price"
+                                                          th:value="${saleOrderDetail?.price}" value=':price'
+                                                          style='border:none;text-align:center;background-color: #00F7DE'
+                                                          size='5px'/></td>
+                    <td class="detail_subTotal"    style="text-align:center" th:text="${saleOrderDetail?.subTotal}">
+                        :subTotal
+                    </td>
+                    <td><a th:if="${type ne 'view'}" class="detail_delete" href="javascript:void(0)">删除</a></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td>合计</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="sum_quantity" style="text-align:center;font-weight:bold;"></td>
+                    <td></td>
+                    <td class="sum_totalPrice"
+                        style="text-align:center;font-size:24px;font-weight:bold;color:#ff013e">
+                    </td>
+                    <td></td>
+                </tr>
+                </tfoot>
+            </table>
+
+            <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">折扣</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="discount" th:readonly="${type eq 'view'}" id="saleOrderDiscount" style="text-align:center;font-size: 20px;font-weight: bold;font-family: 'Arial Black';color:black"
+                               th:value="${saleOrder?.discount}"  text="10" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">优惠金额</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="free_amount" th:readonly="${type eq 'view'}" id="saleOrderFreeAmount" style="text-align:center;font-size: 20px;font-weight: bold;font-family: 'Arial Black';color:black"
+                               th:value="${saleOrder?.free_amount}"  class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">应付金额</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="final_amount" th:readonly="${type eq 'view'}" id="saleOrderFinalAmount" style="text-align:center;font-size: 20px;font-weight: bold;font-family: 'Arial Black';color:black"
+                               th:value="${saleOrder?.final_amount}"  class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">实付金额</label>
+                    <div class="layui-input-inline" >
+                        <input type="text" name="received_amount" th:readonly="${type eq 'view'}" id="saleOrderReceivedAmount" style="text-align:center;font-size: 24px;font-weight: bold;font-family: 'Arial Black';color:red"
+                             th:value="${saleOrder?.received_amount}"  class="layui-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button lay-filter="update" lay-submit style="display: none;"></button>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'laydate'], function () {
+        var form = layui.form;
+        form.render();
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#saleOrderDate'
+        });
+    })
+
+
+    calculate = function () {
+        var sumQuantity = 0.00;
+        var sumTotalPrice = 0.00;
+        $('#saleOrderDetailTable tbody tr').each(function (index, item) {
+            var quantity = parseFloat($(this).find('.detail_quantity').val());
+            var price = parseFloat($(this).find('.detail_price').val());
+            var totalPrice = (quantity * price);
+            $(this).find('.detail_subTotal').text(totalPrice.toFixed(2));
+            sumQuantity += quantity;
+            sumTotalPrice += totalPrice;
+        })
+        $('.sum_quantity').text(sumQuantity);
+        $('.sum_totalPrice').val(sumTotalPrice.toFixed(2));
+        $('.sum_totalPrice').text('￥' + sumTotalPrice.toFixed(2));
+    }
+    setDetailEvents = function () {
+
+        $('.detail_quantity').unbind('change');
+        $('.detail_quantity').change(function () {
+            if (!$.isNumeric($(this).val()) && parseFloat($(this).val()) <= 0) {
+                layerTips.msg('输入无效');
+                $(this).val(1);
+            }
+            var qty = parseFloat($(this).val());
+            var stockQty = parseFloat($(this).parent().parent().find('.detail_stocks').text());
+            if (qty > stockQty) {
+                layerTips.msg('出库数量不能大于现存量');
+                $(this).val(1);
+            }
+            calculate();
+        })
+        $('.detail_price').unbind('change');
+        $('.detail_price').change(function () {
+            if (!$.isNumeric($(this).val()) || parseFloat($(this).val()) <= 0) {
+                layerTips.msg('输入无效');
+                $(this).val(1);
+            }
+            calculate();
+        })
+
+        $('.detail_delete').unbind('click');
+        $('.detail_delete').click(function () {
+            $(this).parent().parent().remove();
+            calculate();
+        })
+    }
+
+
+    $(document).ready(function () {
+        setDetailEvents();
+        calculate();
+        $('#addProduct').on('click', function () {
+            //本表单通过ajax加载 --以模板的形式，当然你也可以直接写在页面上读取
+            var url = baseUrl + '/product/productSku/search.html';
+            $.get(url, null, function (form) {
+                addBoxIndex = layer.open({
+                    type: 1,
+                    title: '选择商品',
+                    content: form,
+                    btn: ['确定', '取消'],
+                    shade: [0.8, '#393D49'],
+                    offset: 'auto',
+                    area: ['1200px', '600px'],
+                    maxmin: true,
+                    yes: function (index) {
+                        //触发表单的提交事件
+                        if (!isEmptyString($("#productSkuList").val())) {
+                            var productSkuList = JSON.parse($("#productSkuList").val());
+                            $.each(productSkuList, function (index, item) {
+                                var existSku = false;
+                                $('#saleOrderDetailTable tbody tr').each(function () {
+                                    var productSkuCode = $(this).find('.detail_productSkuCode').html()
+                                    if (item.skuCode == productSkuCode) {
+                                        existSku = true;
+                                    }
+                                })
+                                if (!existSku) {
+                                    var itemHtml = $('#saleOrderDetailTemplate').html();
+                                    itemHtml = itemHtml.replace(/:productSkuCode/g, item.skuCode);
+                                    itemHtml = itemHtml.replace(/:productSkuName/g, item.name);
+                                    itemHtml = itemHtml.replace(/:brand/g, item.brand);
+                                    itemHtml = itemHtml.replace(/:model/g, item.model);
+                                    itemHtml = itemHtml.replace(/:quantity/g, '1');
+                                    itemHtml = itemHtml.replace(/:price/g, '0');
+                                    itemHtml = itemHtml.replace(/:subTotal/g, '0');
+                                    itemHtml = itemHtml.replace(/:stocks/g, item.stocks);
+                                    $('#saleOrderDetailTable tbody').append('<tr>' + itemHtml + '</tr>');
+                                }
+                            })
+                            setDetailEvents();
+                            calculate();
+                            layer.close(index);
+                        }
+                    },
+                    end: function () {
+                        addBoxIndex = -1;
+                    }
+                });
+            });
+        });
+    })
+    var form = layui.form;
+    form.on('select(customer_name)', function(data) {
+        baseConfig.ajax.post({
+            url: "/customer/customer/findById",
+            data: {
+                id: data.value
+            },
+            success: function (data) {
+                if (data.success) {
+                  //  console.log(data)
+                    $("#saleOrderAddress").val(data.data.cusAddress)
+                    $("#saleOrderPhone").val(data.data.cusPhone);
+                } else {
+                    layerTips.msg(data.message);
+                }
+            }
+        });
+    });
+
+    $("#cusName").change(function () {
+        alert("1111");
+    });
+</script>
+
+

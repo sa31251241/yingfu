@@ -28,7 +28,7 @@ public class VendorController extends BaseController{
 
     @RequestMapping("/list.html")
     public String toVendorList(){
-        return "product/vendorList";
+        return "vendor/vendorList";
     }
 
     @RequestMapping("/list")
@@ -44,7 +44,7 @@ public class VendorController extends BaseController{
         Vendor vendor = vendorService.get(id);
         model.addAttribute("vendor",vendor);
         model.addAttribute("id",id);
-        return "product/vendorDetail";
+        return "vendor/vendorDetail";
     }
 
     @RequestMapping(value = "/update")

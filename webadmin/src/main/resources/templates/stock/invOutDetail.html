@@ -28,6 +28,9 @@
                         <div class="layui-input-inline">
                             <select name="takeUserId"  th:readonly="${type eq 'view'}">
                                 <option value="">选择领用人</option>
+                                <div th:each="user:${takeUserIdList}">
+                                   <option th:selected="${user.userName eq invOut?.takeUserId}" th:value="${user.userName}" th:text="${user.userName}"></option>
+                                </div>
                             </select>
                         </div>
                     </div>

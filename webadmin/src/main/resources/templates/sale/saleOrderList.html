@@ -1,0 +1,310 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="base/common_head :: common_head">
+</head>
+<body>
+<div th:include="base/common_js :: common_js"></div>
+<script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>销售订单管理</legend>
+</fieldset>
+<div class="layui-row">
+    <form class="layui-form layui-form-pane">
+        <div class="layui-col-md10">
+            <div class="layui-form-item layui-col-md10">
+                <div class="layui-col-md3" style="margin-left: 10px;">
+                    <div class="layui-input-inline">
+                        <input name="date" id="saleOrderSearchDate" placeholder="出库起止时间" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md2">
+                    <div class="layui-form-item">
+                        <div class="layui-input-inline">
+                            <select name="status" id="saleOrderStatus">
+                                <option value="">所有状态</option>
+                                <option value="0">待出库</option>
+                                <option value="1">已出库</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md2">
+                    <div class="layui-form-item">
+                        <div class="layui-input-inline">
+                            <select name="takeUserId" id="takeUserId">
+                                <option value="">客户</option>
+                                <div th:each="customer:${customerList}">
+                                    <option th:value="${customer.id}" th:text="${customer.cusName}"></option>
+                                </div>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md2">
+                    <div class="layui-input-inline">
+                        <span id="btnSearch" class="layui-btn layui-btn-normal">搜索</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="layui-col-md2">
+        <div class="layui-btn-group" style="float:left">
+            <button class="layui-btn" id="add">增加</button>
+        </div>
+    </div>
+</div>
+<table class="layui-table" id="LAY_table_saleOrder" lay-filter="saleOrder">
+</table>
+<script type="text/html" id="handlebar">
+    {{# if(d.invStatus==0){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="view">查看</a>
+    <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{# } }}
+    {{# if(d.invStatus==1){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="view">查看</a>
+    {{# } }}
+</script>
+<script>
+    var tableArray = [
+        {title: '序号', type: "numbers", align: "center", style: "font-weight:bold;font-size:20px;"}
+        , {field: 'id', width: '200', title: '订单号', align: "center", style: "font-weight:bold;font-size:20px;"}
+        , {
+            field: 'customer_name',
+            width: '120',
+            title: '购买客户',
+            align: "center",
+            style: "font-weight:bold;font-size:20px;"
+        }
+        , {
+            field: 'total_amount',
+            width: '100',
+            title: '原价格',
+            align: "center",
+            templet: function (data) {
+                return "￥" + data.total_amount;
+            }
+        }
+        , {
+            field: 'discount',
+            width: '70',
+            title: '折扣',
+            align: "center",
+            style: "font-weight:bold;font-size:23px;color:black"
+        }
+        , {
+            field: 'free_amount',
+            width: '100',
+            title: '优惠价',
+            align: "center",
+            style: "font-weight:bold;font-size:20px; color:red",
+            templet: function (data) {
+                return "￥" + data.free_amount;
+            }
+        }
+        , {
+            field: 'final_amount',
+            width: '100',
+            title: '需付金额',
+            align: "center",
+            templet: function (data) {
+                return "￥" + data.final_amount;
+            }
+        }
+        , {
+            field: 'received_amount',
+            width: '100',
+            title: '已付金额',
+            align: "center",
+            templet: function (data) {
+                return "￥" + data.received_amount;
+            }
+        }
+        , {
+            field: 'create_time',
+            width: '150',
+            title: '创建时间',
+            align: "center",
+            style: "font-weight:bold;font-size:20px;"
+        }, {
+            field: 'arrearage',
+            width: '100',
+            title: '欠费金额',
+            align: "center",
+            style: "font-weight:bold;font-size:25px;color:red",
+            templet: function (data) {
+                return "￥" + data.arrearage;
+            }
+        }
+        , {
+            field: 'status__dic',
+            width: '100',
+            title: '订单状态',
+            align: "center",
+            style: "font-weight:bold;font-size:20px; color:red"
+        }
+        , {field: 'invStatus__dic', width: '100', title: '出库状态', align: "center"}
+        , {field: 'remark', width: '100', title: '备注', align: "center"}
+        , {toolbar: '#handlebar', width: '200', title: '操作', align: "center"}
+    ]
+
+    layui.use(['form', 'laydate'], function () {
+        var form = layui.form;
+        form.render();
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#saleOrderSearchDate',
+            range: '~'
+        });
+    });
+
+    baseConfig.layui.init({
+        use: ['element', 'layer', 'form', 'laydate', 'table'],
+        useTable: {
+            toolName: "saleOrder",
+            onTool: function (obj) {
+                var data = obj.data;
+                if (obj.event === 'del') {
+                    layer.confirm('确认删除该出库单吗？', function (index) {
+                        layer.close(index);
+                        baseConfig.ajax.post({
+                            url: "/sale/order/delete",
+                            data: {
+                                id: data.id
+                            },
+                            success: function (data) {
+                                if (data.success) {
+                                    layerTips.msg(data.message);
+                                    reload_saleOrder_table(); //刷新
+                                } else {
+                                    layerTips.msg(data.message);
+                                }
+                            }
+                        })
+                    });
+                } else if (obj.event === 'edit') {
+                    update_saleOrder("edit", data.id)
+                } else if (obj.event === 'view') {
+                    update_saleOrder("view", data.id)
+                }
+            }
+        },
+        tableRender: {
+            elem: 'LAY_table_saleOrder'
+            , url: '/sale/order/list'
+            , cols: [tableArray]
+            , id: 'saleOrderReload'
+        }
+    })
+
+    function reload_saleOrder_table() {
+        var data = {};
+        var saleOrderDate = $("#saleOrderSearchDate").val();
+        if (!isEmptyString(saleOrderDate)) {
+            var dateArray = saleOrderDate.split("~");
+            var startDate = $.trim(dateArray[0]);
+            var endDate = $.trim(dateArray[1]);
+            data.startDate = startDate;
+            data.endDate = endDate;
+        } else {
+            data.startDate = "";
+            data.endDate = "";
+        }
+        data.invStatus = $("#saleOrderStatus").val();
+        data.customer_id = $("#takeUserId").val();
+        baseConfig.layui.reloadTable({
+            renderId: 'saleOrderReload',
+            params: data
+        })
+    }
+
+    $("#btnSearch").click(function () {
+        reload_saleOrder_table();
+    });
+
+    var addBoxIndex = -1;
+    $('#add').on('click', function () {
+        update_saleOrder("add")
+    })
+
+    function update_saleOrder(type, id) {
+        if (addBoxIndex !== -1)
+            return;
+        //本表单通过ajax加载 --以模板的形式，当然你也可以直接写在页面上读取
+        url = baseUrl + '/sale/order/detail.html';
+        handleBtn = ['保存', '取消']
+        if ("edit" == type) {
+            url = url + "?type=edit&id=" + id
+            title = "编辑定单"
+        }
+        if ("view" == type) {
+            url = url + "?type=view&id=" + id
+            title = "查看出库单"
+            handleBtn = ['确定']
+        } else {
+            title = "新增订单"
+        }
+        $.get(url, null, function (form) {
+            addBoxIndex = layer.open({
+                type: 1,
+                title: title,
+                content: form,
+                btn: handleBtn,
+                shade: [0.8, '#393D49'],
+                offset: 'auto',
+                area: ['1000px', '650px'],
+                maxmin: true,
+                yes: baseConfig.layui.openyes,
+                full: function (elem) {
+                    baseConfig.ajaxFull(elem)
+                },
+                success: baseConfig.layui.opensuccess({
+                    submitId: "update",
+                    onSubmit: function (data) {
+                        if (type == "view") {
+                            layui.layer.closeAll('page');
+                            return false;
+                        }
+                        var saleOrderDetailList = [];
+                        $('#saleOrderDetailTable tbody tr').each(function () {
+                            var quantity = parseFloat($(this).find('.detail_quantity').val());
+                            var price = parseFloat($(this).find('.detail_price').val());
+                            var subTotal = (quantity * price);
+                            saleOrderDetailList.push({
+                                productSkuCode: $(this).find('.detail_productSkuCode').html(),
+                                productSkuName: $(this).find('.detail_productSkuName').html(),
+                                quantity: quantity,
+                                price: price,
+                                subTotal: subTotal,
+                                brand: $(this).find('.detail_brand').html(),
+                                model: $(this).find('.detail_model').html(),
+                            })
+                        })
+                        dataField = data.field;
+                        dataField.saleOrderDetailList = saleOrderDetailList
+                        baseConfig.ajax.post({
+                            url: '/sale/order/update',
+                            data: dataField,
+                            success: function (data) {
+                                if (data.success) {
+                                    layerTips.msg(data.message);
+                                    layui.layer.closeAll('page');
+                                    reload_saleOrder_table(); //刷新
+                                } else {
+                                    layerTips.msg(data.message);
+                                }
+                            }
+                        })
+                    }
+                }),
+                end: function () {
+                    addBoxIndex = -1;
+                }
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

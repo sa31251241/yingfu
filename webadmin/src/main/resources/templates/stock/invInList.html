@@ -35,6 +35,7 @@
                                 <option value="">所有状态</option>
                                 <option value="0">待入库</option>
                                 <option value="1">已入库</option>
+                                <option value="2">透支入库</option>
                             </select>
                         </div>
                     </div>
@@ -68,13 +69,13 @@
 </script>
 <script>
     var tableArray = [
-        { title: '序号', type:"numbers"}
-        ,{field:'id', title: '入库单编号'}
-        ,{field:'vendorName', title: '供应商'}
-        ,{field:'date', title: '入库日期'}
-        ,{field:'totalPrice', title: '总金额'}
-        ,{field:'status__dic', title: '状态'}
-        ,{toolbar: '#handlebar', title: '操作'}
+        { title: '序号', type:"numbers",align:'center'}
+        ,{field:'id', title: '入库单编号',align:'center'}
+        ,{field:'vendorName', title: '供应商',align:'center'}
+        ,{field:'date', title: '入库日期',align:'center'}
+        ,{field:'totalPrice', title: '总金额',align:'center'}
+        ,{field:'status__dic', title: '状态',align:'center'}
+        ,{toolbar: '#handlebar', title: '操作',align:'center'}
     ]
 
     layui.use(['form','laydate'], function() {

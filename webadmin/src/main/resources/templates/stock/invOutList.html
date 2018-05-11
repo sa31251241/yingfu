@@ -32,6 +32,9 @@
                         <div class="layui-input-inline">
                             <select name="takeUserId" id = "takeUserId">
                                 <option value="">领用人</option>
+                                <div th:each="user:${userlist}">
+                                    <option  th:value="${user.userName}" th:text="${user.userName}"></option>
+                                </div>
                             </select>
                         </div>
                     </div>
@@ -69,7 +72,7 @@
         ,{field:'id',width:'200', title: '出库单编号'}
         ,{field:'type__dic',width:'120', title: '出库类型'}
         ,{field:'date',width:'150', title: '出库日期'}
-        ,{field:'takeUserName',width:'150', title: '领用人'}
+        ,{field:'takeUserId',width:'150', title: '领用人'}
         ,{field:'totalPrice',width:'100',title: '总金额'}
         ,{field:'status__dic', width:'100',title: '状态'}
         ,{toolbar: '#handlebar',width:'200', title: '操作'}
@@ -157,6 +160,7 @@
         }
         data.status = $("#invOutStatus").val();
         data.vendorId = $("#invOutVendorId").val();
+        data.takeUserId=$("#takeUserId").val();
         baseConfig.layui.reloadTable({
             renderId:'invOutReload',
             params:data

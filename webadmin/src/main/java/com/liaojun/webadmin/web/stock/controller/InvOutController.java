@@ -6,11 +6,15 @@ import com.liaojun.component.web.model.ApiQueryRequest;
 import com.liaojun.component.web.model.ApiRequest;
 import com.liaojun.webadmin.base.constants.SysConstants;
 import com.liaojun.webadmin.base.controller.BaseController;
+import com.liaojun.webadmin.customer.model.Customer;
+import com.liaojun.webadmin.customer.service.CustomerService;
 import com.liaojun.webadmin.product.model.Vendor;
 import com.liaojun.webadmin.stock.model.InvOutDetail;
 import com.liaojun.webadmin.stock.model.InvOut;
 import com.liaojun.webadmin.stock.service.IInvOutDetailService;
 import com.liaojun.webadmin.stock.service.IInvOutService;
+import com.liaojun.webadmin.system.model.User;
+import com.liaojun.webadmin.system.service.UserService;
 import com.liaojun.webadmin.utils.SortRequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,9 +38,13 @@ public class InvOutController extends BaseController{
 
     @Autowired
     private IInvOutDetailService invOutDetailService;
-
+    @Autowired
+    private UserService userService;
     @RequestMapping("/list.html")
     public String toInvOutList(Model model){
+
+        List<User> userList = userService.getList();
+        model.addAttribute("userlist",userList);
         return "stock/invOutList";
     }
 
@@ -53,6 +61,7 @@ public class InvOutController extends BaseController{
         InvOut invOut = invOutService.findById(id);
         model.addAttribute("invOut",invOut);
         model.addAttribute("typeList", SysConstants.valueDescMapCons.get("INVOUT_TYPE"));
+        model.addAttribute("takeUserIdList",userService.getList());
         model.addAttribute("type",type);
         return "stock/invOutDetail";
     }
